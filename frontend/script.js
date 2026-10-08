@@ -8,3 +8,10 @@ buttons.forEach(function (button) {
         console.log("Clic sur : " + title);
     });
 });
+async function loadAd(id) {
+    const response = await fetch("http://localhost:3000/ads/" + id);
+    const ad = await response.json();
+    console.log(ad);
+}
+
+loadAd(1);
