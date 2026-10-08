@@ -3,40 +3,111 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Job Board</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tremplin - Offres</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <header>
-    <h1>Job Board</h1>
-    <p>Trouve ton prochain job</p>
+  <header class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
+            <rect x="2" y="12" width="4" height="8" rx="1" fill="white" />
+            <rect x="9" y="7" width="4" height="13" rx="1" fill="white" />
+            <rect x="16" y="10" width="4" height="10" rx="1" fill="white" />
+            <circle cx="18" cy="4" r="2.5" fill="#ffc845" />
+          </svg>
+        </span>
+        Tremplin
+      </a>
+      <nav class="nav-links">
+        <a href="index.html" class="active">Offres</a>
+        <a href="entreprises.html">Entreprises</a>
+      </nav>
+      <a href="connexion.html" class="btn btn-primary btn-small user-chip" id="nav-user">Se connecter</a>
+    </div>
   </header>
-  <main>
-    <h2>Les annonces</h2>
-    <article class="ad-card">
-      <h3>Développeur full-stack JavaScript</h3>
-      <p>Faites évoluer les outils internes de nos jeux.</p>
-      <button>Learn more</button>
-    </article>
 
-    <article class="ad-card">
-      <h3>Stage développeur front-end</h3>
-      <p>Intégrez les maquettes de nos outils.</p>
-      <button>Learn more</button>
-    </article>
+  <section class="hero">
+    <div class="container">
+      <div>
+        <h1>Trouvez votre prochain job</h1>
+        <p id="ads-count">Chargement...</p>
+      </div>
+    </div>
+  </section>
 
-    <article class="ad-card">
-      <h3>Data engineer</h3>
-      <p>Construisez des pipelines de données.</p>
-      <button>Learn more</button>
-    </article>
+  <main class="container">
+    <div class="list-header">
+      <h2 class="section-title" id="ads-title">Les annonces</h2>
+      <a href="index.html" class="show-all" id="show-all" hidden>Voir toutes les offres</a>
+    </div>
+
+    <!-- Les cartes sont fabriquées par script.js à partir de l'API -->
+    <div class="offers-grid" id="ads-list">
+      <p class="form-message info">Chargement des annonces...</p>
+    </div>
+
+    <!-- Modèle d'une carte : invisible, script.js le copie pour chaque annonce -->
+    <template id="ad-template">
+      <article class="ad-card">
+        <div class="ad-company">
+          <span class="initial"></span>
+          <span><span class="ad-company-name"></span><br><span class="ad-category"></span></span>
+        </div>
+        <h3></h3>
+        <p class="ad-short"></p>
+        <div class="ad-footer">
+          <button type="button" class="btn btn-outline btn-small btn-more">Learn more</button>
+          <button type="button" class="btn btn-primary btn-small btn-apply">Postuler</button>
+        </div>
+
+        <!-- Détail de l'annonce : rempli par "Learn more" (GET /ads/:id) -->
+        <div class="ad-details" hidden>
+          <p class="form-message"></p>
+          <dl class="details-list" hidden>
+            <dt>Entreprise</dt>
+            <dd class="detail-company"></dd>
+            <dt>Catégorie</dt>
+            <dd class="detail-category"></dd>
+            <dt>Description</dt>
+            <dd class="detail-description"></dd>
+          </dl>
+        </div>
+
+        <!-- Formulaire de candidature : ouvert par "Postuler" (POST /ads/:id/applications) -->
+        <form class="apply-form" hidden>
+          <h4>Postuler à cette offre</h4>
+          <div class="form-row">
+            <div class="field">
+              <label>Prénom<input type="text" name="first_name" autocomplete="given-name" required></label>
+            </div>
+            <div class="field">
+              <label>Nom<input type="text" name="last_name" autocomplete="family-name" required></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Email<input type="email" name="email" autocomplete="email" required></label>
+          </div>
+          <div class="field">
+            <label>Message<textarea name="message" rows="4" required></textarea></label>
+          </div>
+          <p class="form-message" role="status"></p>
+          <button type="submit" class="btn btn-primary btn-full">Envoyer ma candidature</button>
+        </form>
+      </article>
+    </template>
   </main>
 
   <footer>
-    <p>© 2026 Job Board - Projet Epitech</p>
+    <p>© 2026 Tremplin - Projet Epitech</p>
   </footer>
 
+  <script src="api.js"></script>
   <script src="script.js"></script>
 </body>
 
