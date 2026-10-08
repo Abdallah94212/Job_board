@@ -1,6 +1,3 @@
-// Page de connexion. Utilise postJSON et showMessage (api.js).
-
-// ===== Les onglets "Se connecter" / "Créer un compte" =====
 const tabs = document.querySelectorAll(".auth-tab");
 const forms = document.querySelectorAll(".auth-form");
 
@@ -19,11 +16,10 @@ tabs.forEach(function (tab) {
     });
 });
 
-// ===== Connexion =====
 const loginForm = document.getElementById("login-form");
 
 loginForm.addEventListener("submit", async function (event) {
-    event.preventDefault(); // empêche le rechargement de la page
+    event.preventDefault();
 
     const data = {
         email: document.getElementById("login-email").value,
@@ -51,7 +47,6 @@ loginForm.addEventListener("submit", async function (event) {
     }
 });
 
-// ===== Création de compte =====
 const registerForm = document.getElementById("register-form");
 
 registerForm.addEventListener("submit", async function (event) {

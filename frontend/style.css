@@ -1,4 +1,3 @@
-/* ===== Couleurs et réglages communs (variables CSS) ===== */
 :root {
     --navy: #12294a;
     --primary: #2b50ec;
@@ -17,7 +16,6 @@
     box-sizing: border-box;
 }
 
-/* L'attribut hidden doit toujours cacher, même un .btn */
 [hidden] {
     display: none !important;
 }
@@ -40,7 +38,6 @@ a {
     padding: 0 24px;
 }
 
-/* ===== Barre de navigation ===== */
 .navbar {
     background-color: var(--card);
     border-bottom: 1px solid var(--border);
@@ -69,6 +66,8 @@ a {
     height: 40px;
     border-radius: 8px;
     background-color: var(--primary);
+    color: white;
+    font-size: 22px;
 }
 
 .nav-links {
@@ -93,7 +92,6 @@ a {
     font-weight: 600;
 }
 
-/* ===== Pastilles avec initiales ===== */
 .avatar {
     display: flex;
     align-items: center;
@@ -133,7 +131,6 @@ a {
     flex-shrink: 0;
 }
 
-/* ===== Bandeau bleu foncé ===== */
 .hero {
     background-color: var(--navy);
     color: white;
@@ -170,7 +167,6 @@ a {
     border: 2px solid rgba(255, 255, 255, 0.5);
 }
 
-/* ===== Boutons ===== */
 .btn {
     display: inline-block;
     border: none;
@@ -214,7 +210,6 @@ a {
     font-size: 15px;
 }
 
-/* ===== Cartes ===== */
 main.container {
     padding-top: 40px;
     padding-bottom: 64px;
@@ -246,7 +241,6 @@ main > .section-title:first-child {
     margin-top: 0;
 }
 
-/* ===== Cartes d'offres ===== */
 .offers-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -268,6 +262,10 @@ main > .section-title:first-child {
     gap: 16px;
     color: var(--muted);
     line-height: 1.5;
+}
+
+.ad-company p {
+    margin: 0;
 }
 
 .ad-company .initial {
@@ -304,7 +302,6 @@ main > .section-title:first-child {
     font-size: 14px;
 }
 
-/* ===== Titre de liste + lien "Voir toutes les offres" ===== */
 .list-header {
     display: flex;
     align-items: baseline;
@@ -322,7 +319,6 @@ main > .section-title:first-child {
     font-weight: 600;
 }
 
-/* ===== Détail d'une annonce ("Learn more") ===== */
 .ad-details {
     margin-top: 20px;
     padding-top: 16px;
@@ -333,21 +329,11 @@ main > .section-title:first-child {
     display: none;
 }
 
-.details-list {
-    margin: 0;
+.details-list p {
+    margin: 0 0 12px;
+    color: var(--text);
 }
 
-.details-list dt {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--muted);
-}
-
-.details-list dd {
-    margin: 2px 0 12px;
-}
-
-/* ===== Formulaire de candidature ("Postuler") ===== */
 .apply-form {
     margin-top: 20px;
     padding-top: 16px;
@@ -357,10 +343,6 @@ main > .section-title:first-child {
 .apply-form h4 {
     margin: 0 0 16px;
     font-size: 18px;
-}
-
-.apply-form .form-row {
-    gap: 12px;
 }
 
 .field label input,
@@ -389,63 +371,11 @@ main > .section-title:first-child {
     cursor: wait;
 }
 
-/* ===== Cartes entreprises ===== */
-.company-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.company-header h3 {
-    margin: 0;
-}
-
-.company-category {
-    color: var(--muted);
-}
-
-.company-header .tag {
-    margin-left: auto;
-    white-space: nowrap;
-}
-
-.company-ads {
-    list-style: none;
-    margin: 20px 0;
-    padding: 0;
-}
-
-.company-ads li {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-}
-
-.company-ads li:last-child {
-    border-bottom: none;
-}
-
-.company-ads strong {
-    display: block;
-}
-
-.company-ads span {
-    color: var(--muted);
-    font-size: 15px;
-}
-
-/* ===== Page compte : deux colonnes ===== */
 .account-grid {
     display: grid;
     grid-template-columns: 1fr 1.35fr;
     gap: 32px;
     align-items: start;
-}
-
-/* ===== Formulaire ===== */
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
 }
 
 .field {
@@ -505,7 +435,6 @@ main > .section-title:first-child {
     min-width: 250px;
 }
 
-/* ===== Liste des candidatures ===== */
 .card-header {
     display: flex;
     align-items: center;
@@ -553,7 +482,6 @@ main > .section-title:first-child {
     white-space: nowrap;
 }
 
-/* ===== Pastilles de statut ===== */
 .status {
     min-width: 96px;
     padding: 6px 14px;
@@ -586,7 +514,6 @@ main > .section-title:first-child {
     grid-template-columns: 1fr 1fr;
 }
 
-/* ===== Page de connexion ===== */
 .auth-page {
     display: flex;
     justify-content: center;
@@ -647,7 +574,6 @@ main > .section-title:first-child {
     color: #d92d20;
 }
 
-/* ===== Pied de page ===== */
 footer {
     padding: 24px 0;
     text-align: center;
@@ -655,11 +581,9 @@ footer {
     border-top: 1px solid var(--border);
 }
 
-/* ===== Petits écrans (téléphone, tablette) ===== */
 @media (max-width: 860px) {
     .account-grid,
-    .suggestions,
-    .form-row {
+    .suggestions {
         grid-template-columns: 1fr;
     }
 

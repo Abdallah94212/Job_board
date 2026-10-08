@@ -1,23 +1,16 @@
-// Page des offres. Utilise COMPANY_IDS, getJSON, postJSON, showMessage,
-// showListMessage et getCurrentUser (api.js).
-
 const adsList = document.getElementById("ads-list");
 const adsCount = document.getElementById("ads-count");
 const adsTitle = document.getElementById("ads-title");
 const showAllLink = document.getElementById("show-all");
 const adTemplate = document.getElementById("ad-template");
 
-// Lien venant de la page Entreprises : index.html?company=1
-// -> on n'affiche que les offres de cette entreprise.
 const params = new URLSearchParams(window.location.search);
 const selectedCompany = Number(params.get("company"));
 
-// ===== "Learn more" : afficher le détail sous la carte =====
 async function toggleDetails(card, adId, button) {
     const details = card.querySelector(".ad-details");
     const list = details.querySelector(".details-list");
 
-    // Déjà ouvert : on referme
     if (!details.hidden) {
         details.hidden = true;
         button.textContent = "Learn more";
@@ -30,7 +23,6 @@ async function toggleDetails(card, adId, button) {
     showMessage(details, "Chargement du détail...", "info");
 
     try {
-        // Le sujet demande d'appeler l'API au clic, sans recharger la page
         const ad = await getJSON("/ads/" + adId);
         details.querySelector(".detail-company").textContent = ad.company_name;
         details.querySelector(".detail-category").textContent = ad.category_name;
@@ -47,13 +39,11 @@ async function toggleDetails(card, adId, button) {
     }
 }
 
-// ===== "Postuler" : ouvrir ou fermer le formulaire =====
 function toggleApplyForm(card, button) {
     const form = card.querySelector(".apply-form");
     form.hidden = !form.hidden;
     button.textContent = form.hidden ? "Postuler" : "Fermer";
 
-    // Personne connectée : on remplit ses infos à sa place
     const user = getCurrentUser();
     if (!form.hidden && user) {
         form.elements.first_name.value = user.first_name;
@@ -62,7 +52,6 @@ function toggleApplyForm(card, button) {
     }
 }
 
-// ===== Envoi de la candidature =====
 async function sendApplication(form, adId) {
     const data = {
         first_name: form.elements.first_name.value,
@@ -94,7 +83,6 @@ async function sendApplication(form, adId) {
     submitButton.disabled = false;
 }
 
-// ===== Fabriquer une carte à partir d'une annonce =====
 function createAdCard(ad) {
     const card = adTemplate.content.cloneNode(true).querySelector(".ad-card");
 
@@ -116,16 +104,14 @@ function createAdCard(ad) {
 
     const form = card.querySelector(".apply-form");
     form.addEventListener("submit", function (event) {
-        event.preventDefault(); // pas de rechargement de la page
+        event.preventDefault();
         sendApplication(form, ad.id);
     });
 
     return card;
 }
 
-// ===== Charger les annonces et les afficher =====
 async function loadAds() {
-    // Toutes les entreprises, ou seulement celle choisie dans l'URL
     let companyIds = COMPANY_IDS;
     if (selectedCompany) {
         companyIds = [selectedCompany];
@@ -138,8 +124,6 @@ async function loadAds() {
         for (const companyId of companyIds) {
             const companyAds = await getJSON("/companies/" + companyId + "/ads");
 
-            // La liste ne donne que id, titre et description courte :
-            // on demande le détail pour avoir le nom de l'entreprise et la catégorie.
             for (const shortAd of companyAds) {
                 const ad = await getJSON("/ads/" + shortAd.id);
                 ads.push(ad);

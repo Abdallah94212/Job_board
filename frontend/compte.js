@@ -1,13 +1,9 @@
-// Page "Mon compte". Utilise COMPANY_IDS, getJSON, sendJSON, showMessage,
-// showListMessage, getCurrentUser et logout (api.js).
-
 const user = getCurrentUser();
 const accountForm = document.getElementById("account-form");
 const applicationsList = document.getElementById("applications-list");
 const applicationsCount = document.getElementById("applications-count");
 const suggestions = document.getElementById("suggestions");
 
-// ===== Remplir la page avec la personne connectée =====
 function fillAccount() {
     const initials = user.first_name.charAt(0) + user.last_name.charAt(0);
     document.getElementById("hero-avatar").textContent = initials.toUpperCase();
@@ -18,7 +14,6 @@ function fillAccount() {
     accountForm.elements.first_name.value = user.first_name;
     accountForm.elements.last_name.value = user.last_name;
     accountForm.elements.email.value = user.email;
-    // Pas encore de téléphone ni de ville dans la base
     accountForm.elements.phone.value = "";
     accountForm.elements.city.value = "";
     accountForm.elements.phone.placeholder = "Pas encore enregistré";
@@ -26,7 +21,6 @@ function fillAccount() {
     document.getElementById("password-info").textContent = "Protégé et chiffré";
 }
 
-// ===== Mes candidatures : GET /people/:id/applications =====
 async function loadApplications() {
     try {
         const applications = await getJSON("/people/" + user.id + "/applications");
@@ -59,7 +53,6 @@ async function loadApplications() {
             const sentOn = new Date(application.created_at);
             date.textContent = "Envoyée le " + sentOn.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
 
-            // Pas encore de statut dans la base : toutes sont "Envoyée"
             const status = document.createElement("span");
             status.className = "status status-sent";
             status.textContent = "Envoyée";
@@ -81,12 +74,10 @@ async function loadApplications() {
     }
 }
 
-// ===== Offres qui pourraient vous plaire : vraies annonces de l'API =====
 async function loadSuggestions() {
     try {
         suggestions.innerHTML = "";
 
-        // La première annonce de chaque entreprise
         for (const companyId of COMPANY_IDS) {
             const companyAds = await getJSON("/companies/" + companyId + "/ads");
             if (companyAds.length === 0) {
@@ -136,7 +127,6 @@ function createSuggestionCard(ad) {
     return card;
 }
 
-// ===== Bouton "Enregistrer" : PUT /people/:id =====
 accountForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -168,7 +158,6 @@ accountForm.addEventListener("submit", async function (event) {
     }
 });
 
-// ===== Bouton "Supprimer mon compte" : DELETE /people/:id =====
 document.getElementById("delete-button").addEventListener("click", async function () {
     if (!user) {
         showMessage(accountForm, "Connectez-vous pour supprimer votre compte.", "error");
@@ -193,15 +182,12 @@ document.getElementById("delete-button").addEventListener("click", async functio
     }
 });
 
-// ===== Bouton "Changer le mot de passe" =====
 document.getElementById("password-button").addEventListener("click", function () {
     showMessage(accountForm, "Le changement de mot de passe arrivera avec la connexion côté serveur (Step 06).", "info");
 });
 
-// ===== Bouton "Se déconnecter" =====
 document.getElementById("logout-button").addEventListener("click", logout);
 
-// ===== Au chargement de la page =====
 if (user) {
     fillAccount();
     loadApplications();

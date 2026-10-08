@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tremplin - Entreprises</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -13,17 +12,7 @@
 <body>
   <header class="navbar">
     <div class="container">
-      <a href="index.html" class="logo">
-        <span class="logo-icon">
-          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
-            <rect x="2" y="12" width="4" height="8" rx="1" fill="white" />
-            <rect x="9" y="7" width="4" height="13" rx="1" fill="white" />
-            <rect x="16" y="10" width="4" height="10" rx="1" fill="white" />
-            <circle cx="18" cy="4" r="2.5" fill="#ffc845" />
-          </svg>
-        </span>
-        Tremplin
-      </a>
+      <a href="index.html" class="logo"><span class="logo-icon">T</span> Tremplin</a>
       <nav class="nav-links">
         <a href="index.html">Offres</a>
         <a href="entreprises.html" class="active">Entreprises</a>
@@ -34,34 +23,28 @@
 
   <section class="hero">
     <div class="container">
-      <div>
-        <h1>Les entreprises qui recrutent</h1>
-        <p id="companies-count">Chargement...</p>
-      </div>
+      <h1>Les entreprises qui recrutent</h1>
+      <p id="companies-count">Chargement...</p>
     </div>
   </section>
 
   <main class="container">
     <h2 class="section-title">Les entreprises</h2>
 
-    <!-- Les cartes sont fabriquées par entreprises.js à partir de l'API -->
     <div class="offers-grid" id="companies-list">
       <p class="form-message info">Chargement des entreprises...</p>
     </div>
 
-    <!-- Modèle d'une carte entreprise : script le copie pour chaque entreprise -->
     <template id="company-template">
-      <article class="ad-card company-card">
-        <div class="company-header">
+      <article class="ad-card">
+        <div class="ad-company">
           <span class="initial"></span>
-          <div>
-            <h3></h3>
-            <span class="company-category"></span>
-          </div>
-          <span class="tag"></span>
+          <span class="company-category"></span>
         </div>
-        <ul class="company-ads"></ul>
+        <h3></h3>
+        <p class="company-ads"></p>
         <div class="ad-footer">
+          <span class="tag"></span>
           <a href="index.html" class="btn btn-primary btn-small btn-company-offers">Voir les offres</a>
         </div>
       </article>

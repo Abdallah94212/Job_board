@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tremplin - Mon compte</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -13,17 +12,7 @@
 <body>
   <header class="navbar">
     <div class="container">
-      <a href="index.html" class="logo">
-        <span class="logo-icon">
-          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
-            <rect x="2" y="12" width="4" height="8" rx="1" fill="white" />
-            <rect x="9" y="7" width="4" height="13" rx="1" fill="white" />
-            <rect x="16" y="10" width="4" height="10" rx="1" fill="white" />
-            <circle cx="18" cy="4" r="2.5" fill="#ffc845" />
-          </svg>
-        </span>
-        Tremplin
-      </a>
+      <a href="index.html" class="logo"><span class="logo-icon">T</span> Tremplin</a>
       <nav class="nav-links">
         <a href="index.html">Offres</a>
         <a href="entreprises.html">Entreprises</a>
@@ -34,10 +23,10 @@
 
   <section class="hero">
     <div class="container">
-      <span class="avatar avatar-big" id="hero-avatar">LM</span>
+      <span class="avatar avatar-big" id="hero-avatar">?</span>
       <div>
-        <h1 id="hero-name">Bonjour Léa</h1>
-        <p id="hero-subtitle">Exemple de compte : connectez-vous pour voir le vôtre.</p>
+        <h1 id="hero-name">Bonjour</h1>
+        <p id="hero-subtitle">Connectez-vous pour voir votre compte.</p>
       </div>
       <div class="hero-actions">
         <a href="index.html" class="btn btn-yellow">Voir les offres</a>
@@ -47,44 +36,41 @@
   </section>
 
   <main class="container account-grid">
-    <!-- Colonne de gauche : le formulaire du compte -->
     <section class="card">
       <h2>Mon compte</h2>
       <p class="subtitle">Ces informations remplissent vos candidatures.</p>
 
       <form id="account-form">
-        <div class="form-row">
-          <div class="field">
-            <label for="last-name">Nom</label>
-            <input type="text" id="last-name" name="last_name" value="Martin" required>
-          </div>
-          <div class="field">
-            <label for="first-name">Prénom</label>
-            <input type="text" id="first-name" name="first_name" value="Léa" required>
-          </div>
+        <div class="field">
+          <label for="first-name">Prénom</label>
+          <input type="text" id="first-name" name="first_name" required>
+        </div>
+        <div class="field">
+          <label for="last-name">Nom</label>
+          <input type="text" id="last-name" name="last_name" required>
         </div>
         <div class="field">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" value="lea.martin@mail.fr" required>
+          <input type="email" id="email" name="email" required>
         </div>
         <div class="field">
           <label for="phone">Téléphone</label>
-          <input type="tel" id="phone" name="phone" value="06 12 34 56 78">
+          <input type="tel" id="phone" name="phone">
         </div>
         <div class="field">
           <label for="city">Ville</label>
-          <input type="text" id="city" name="city" value="Lyon">
+          <input type="text" id="city" name="city">
         </div>
 
         <div class="password-box">
           <div>
             <h3>Mot de passe</h3>
-            <p id="password-info">Modifié il y a 12 jours</p>
+            <p id="password-info">••••••••</p>
           </div>
           <button type="button" class="btn btn-outline btn-small" id="password-button">Changer le mot de passe</button>
         </div>
 
-        <p class="form-message" role="status"></p>
+        <p class="form-message"></p>
         <div class="form-actions">
           <button type="button" class="btn btn-light" id="delete-button">Supprimer mon compte</button>
           <button type="submit" class="btn btn-primary">Enregistrer</button>
@@ -92,55 +78,18 @@
       </form>
     </section>
 
-    <!-- Colonne de droite : candidatures et suggestions -->
     <div>
       <section class="card">
         <div class="card-header">
           <h2>Mes candidatures</h2>
-          <span class="count" id="applications-count">4 envoyées</span>
+          <span class="count" id="applications-count"></span>
         </div>
         <ul class="applications" id="applications-list">
-          <li>
-            <span class="initial">N</span>
-            <div class="app-info">
-              <strong>Développeur·se full-stack JavaScript</strong>
-              <span>Nébula Studio, Lyon</span>
-            </div>
-            <span class="app-date">Envoyée le 5 oct.</span>
-            <span class="status status-interview">Entretien</span>
-          </li>
-          <li>
-            <span class="initial">A</span>
-            <div class="app-info">
-              <strong>Designer UX/UI</strong>
-              <span>Atelier Mosaïque, Paris</span>
-            </div>
-            <span class="app-date">Envoyée le 2 oct.</span>
-            <span class="status status-seen">Vue</span>
-          </li>
-          <li>
-            <span class="initial">K</span>
-            <div class="app-info">
-              <strong>Stage développeur Python</strong>
-              <span>Kelp Labs, Marseille</span>
-            </div>
-            <span class="app-date">Envoyée le 28 sept.</span>
-            <span class="status status-sent">Envoyée</span>
-          </li>
-          <li>
-            <span class="initial">P</span>
-            <div class="app-info">
-              <strong>Data analyst junior</strong>
-              <span>Ponant Data, Nantes</span>
-            </div>
-            <span class="app-date">Envoyée le 20 sept.</span>
-            <span class="status status-refused">Refusée</span>
-          </li>
+          <li>Connectez-vous pour voir vos candidatures.</li>
         </ul>
       </section>
 
       <h2 class="section-title">Offres qui pourraient vous plaire</h2>
-      <!-- Rempli par compte.js avec de vraies annonces de l'API -->
       <div class="offers-grid suggestions" id="suggestions">
         <p class="form-message info">Chargement des offres...</p>
       </div>
