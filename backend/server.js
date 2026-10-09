@@ -134,6 +134,12 @@ const ADMIN_TABLES = {
              (SELECT COUNT(*) FROM ads WHERE ads.company_id = companies.id)::int AS ads_count
            FROM companies`
   },
+  categories: {
+    columns: ['name'],
+    list: `SELECT categories.id, categories.name,
+             (SELECT COUNT(*) FROM ads WHERE ads.category_id = categories.id)::int AS ads_count
+           FROM categories`
+  },
   people: {
     columns: ['first_name', 'last_name', 'email'],
     list: `SELECT people.id, people.first_name, people.last_name, people.email, people.phone,
@@ -175,6 +181,7 @@ app.get('/admin/stats', async (req, res) => {
   const result = await db.query(
     `SELECT (SELECT COUNT(*) FROM ads)::int AS ads,
             (SELECT COUNT(*) FROM companies)::int AS companies,
+            (SELECT COUNT(*) FROM categories)::int AS categories,
             (SELECT COUNT(*) FROM people)::int AS people,
             (SELECT COUNT(*) FROM applications)::int AS applications`
   );

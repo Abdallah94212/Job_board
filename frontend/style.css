@@ -722,7 +722,7 @@ footer {
 
 .stats {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 16px;
     margin-bottom: 24px;
 }
@@ -771,6 +771,11 @@ footer {
 .dot-yellow {
     background-color: #fff4d6;
     box-shadow: inset 0 0 0 14px #fff4d6, inset 0 0 0 24px #a06a00;
+}
+
+.dot-red {
+    background-color: #fde8e8;
+    box-shadow: inset 0 0 0 14px #fde8e8, inset 0 0 0 24px #c0392b;
 }
 
 .admin-form {

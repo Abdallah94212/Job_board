@@ -20,6 +20,8 @@
         <button type="button" class="side-link active" data-table="ads">Annonces <span id="count-ads">0</span></button>
         <button type="button" class="side-link" data-table="companies">Entreprises <span
             id="count-companies">0</span></button>
+        <button type="button" class="side-link" data-table="categories">Catégories <span
+            id="count-categories">0</span></button>
         <button type="button" class="side-link" data-table="people">Personnes <span id="count-people">0</span></button>
         <button type="button" class="side-link" data-table="applications">Candidatures <span
             id="count-applications">0</span></button>
@@ -62,6 +64,12 @@
           <span class="stat-dot dot-purple"></span>
           <div>
             <p>Entreprises</p><strong id="stat-companies">0</strong>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-dot dot-red"></span>
+          <div>
+            <p>Catégories</p><strong id="stat-categories">0</strong>
           </div>
         </div>
         <div class="stat-card">
@@ -116,6 +124,18 @@
 
       <form class="card admin-form" id="form-companies" hidden>
         <h2>Nouvelle entreprise</h2>
+        <div class="field">
+          <label>Nom <input type="text" name="name" required></label>
+        </div>
+        <p class="form-message"></p>
+        <div class="form-buttons">
+          <button type="button" class="btn btn-light btn-cancel">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>
+
+      <form class="card admin-form" id="form-categories" hidden>
+        <h2>Nouvelle catégorie</h2>
         <div class="field">
           <label>Nom <input type="text" name="name" required></label>
         </div>
