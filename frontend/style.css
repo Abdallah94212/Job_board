@@ -490,24 +490,9 @@ main > .section-title:first-child {
     text-align: center;
 }
 
-.status-interview {
-    background-color: var(--soft-blue);
-    color: var(--primary);
-}
-
-.status-seen {
-    background-color: #fff4d6;
-    color: #a06a00;
-}
-
 .status-sent {
     background-color: var(--bg);
     color: var(--text);
-}
-
-.status-refused {
-    background-color: #fde8e8;
-    color: #d92d20;
 }
 
 .suggestions {
