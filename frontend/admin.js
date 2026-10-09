@@ -9,6 +9,11 @@ const TABLES = {
         newLabel: "Nouvelle entreprise",
         columns: { id: "ID", name: "Nom", ads_count: "Annonces" }
     },
+    categories: {
+        title: "Catégories",
+        newLabel: "Nouvelle catégorie",
+        columns: { id: "ID", name: "Nom", ads_count: "Annonces" }
+    },
     people: {
         title: "Personnes",
         newLabel: "Nouvelle personne",
