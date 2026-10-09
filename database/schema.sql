@@ -19,7 +19,8 @@ CREATE TABLE people (
   id         SERIAL PRIMARY KEY,
   first_name VARCHAR(50) NOT NULL,
   last_name  VARCHAR(50) NOT NULL,
-  email      VARCHAR(255) NOT NULL UNIQUE
+  email      VARCHAR(255) NOT NULL UNIQUE,
+  phone      VARCHAR(20)
 );
 
 -- Les annonces : chacune appartient à une entreprise, à une catégorie et a un responsable (contact_id)

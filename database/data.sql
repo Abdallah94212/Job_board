@@ -11,12 +11,12 @@ INSERT INTO categories (name) VALUES
   ('Data');               -- id 2
 
 -- Les personnes 1 à 3 postulent, les personnes 4 et 5 sont responsables d'annonces
-INSERT INTO people (first_name, last_name, email) VALUES
-  ('Inès', 'Haddad', 'ines.haddad@example.com'),          -- id 1
-  ('Tom', 'Lefèvre', 'tom.lefevre@example.com'),          -- id 2
-  ('Chloé', 'Nguyen', 'chloe.nguyen@example.com'),        -- id 3
-  ('Camille', 'Martin', 'camille.martin@nebula.example'), -- id 4 : responsable chez Nébula Studio
-  ('Hugo', 'Bernard', 'hugo.bernard@vertigo.example');    -- id 5 : responsable chez Vertigo Data
+INSERT INTO people (first_name, last_name, email, phone) VALUES
+  ('Inès', 'Haddad', 'ines.haddad@example.com', '06 12 34 56 78'),          -- id 1
+  ('Tom', 'Lefèvre', 'tom.lefevre@example.com', '06 23 45 67 89'),          -- id 2
+  ('Chloé', 'Nguyen', 'chloe.nguyen@example.com', '07 34 56 78 90'),        -- id 3
+  ('Camille', 'Martin', 'camille.martin@nebula.example', '04 72 00 00 01'), -- id 4 : responsable chez Nébula Studio
+  ('Hugo', 'Bernard', 'hugo.bernard@vertigo.example', '01 40 00 00 02');    -- id 5 : responsable chez Vertigo Data
 
 -- (company_id, category_id, contact_id, title, short_description, description, location, working_time, salary)
 INSERT INTO ads (company_id, category_id, contact_id, title, short_description, description, location, working_time, salary) VALUES
