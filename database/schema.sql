@@ -14,13 +14,16 @@ CREATE TABLE categories (
   name VARCHAR(100) NOT NULL
 );
 
--- Les personnes : celles qui postulent et celles qui sont responsables d'une annonce
+-- Les personnes : celles qui postulent et celles qui sont responsables d'une annonce.
+-- password_hash est vide tant que la personne n'a pas créé de compte.
 CREATE TABLE people (
-  id         SERIAL PRIMARY KEY,
-  first_name VARCHAR(50) NOT NULL,
-  last_name  VARCHAR(50) NOT NULL,
-  email      VARCHAR(255) NOT NULL UNIQUE,
-  phone      VARCHAR(20)
+  id            SERIAL PRIMARY KEY,
+  first_name    VARCHAR(50) NOT NULL,
+  last_name     VARCHAR(50) NOT NULL,
+  email         VARCHAR(255) NOT NULL UNIQUE,
+  phone         VARCHAR(20),
+  password_hash VARCHAR(255),
+  is_admin      BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 -- Les annonces : chacune appartient à une entreprise, à une catégorie et a un responsable (contact_id)
