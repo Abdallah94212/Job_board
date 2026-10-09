@@ -29,10 +29,12 @@ app.get('/companies', async (req, res) => {
 // GET /ads/:id : le détail complet d'une annonce
 app.get('/ads/:id', async (req, res) => {
   const result = await db.query(
-    `SELECT ads.*, companies.name AS company_name, categories.name AS category_name
+    `SELECT ads.*, companies.name AS company_name, categories.name AS category_name,
+            people.first_name || ' ' || people.last_name AS contact_name, people.email AS contact_email
      FROM ads
      JOIN companies ON companies.id = ads.company_id
      JOIN categories ON categories.id = ads.category_id
+     JOIN people ON people.id = ads.contact_id
      WHERE ads.id = $1`,
     [req.params.id]
   );
@@ -59,24 +61,24 @@ app.get('/companies/:id/ads', async (req, res) => {
 
 // POST /ads : créer une annonce
 app.post('/ads', async (req, res) => {
-  const { company_id, category_id, title, short_description, description } = req.body || {}; // {} si aucun JSON n'est envoyé
+  const { company_id, category_id, contact_id, title, short_description, description, location, working_time, salary } = req.body || {}; // {} si aucun JSON n'est envoyé
 
-  if (!company_id || !category_id || !title || !short_description || !description) {
-    return res.status(400).json({ error: 'Champs obligatoires : company_id, category_id, title, short_description, description' });
+  if (!company_id || !category_id || !contact_id || !title || !short_description || !description || !location || !working_time || !salary) {
+    return res.status(400).json({ error: 'Champs obligatoires : company_id, category_id, contact_id, title, short_description, description, location, working_time, salary' });
   }
 
   try {
     const result = await db.query(
-      `INSERT INTO ads (company_id, category_id, title, short_description, description)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO ads (company_id, category_id, contact_id, title, short_description, description, location, working_time, salary)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
-      [company_id, category_id, title, short_description, description]
+      [company_id, category_id, contact_id, title, short_description, description, location, working_time, salary]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    // 23503 : la clé étrangère pointe vers une entreprise ou une catégorie qui n'existe pas
+    // 23503 : la clé étrangère pointe vers une entreprise, une catégorie ou une personne qui n'existe pas
     if (err.code === '23503') {
-      return res.status(400).json({ error: 'Entreprise ou catégorie introuvable' });
+      return res.status(400).json({ error: 'Entreprise, catégorie ou responsable introuvable' });
     }
     throw err;
   }
@@ -119,7 +121,7 @@ app.post('/ads/:id/applications', async (req, res) => {
 // Les noms de tables et de colonnes viennent UNIQUEMENT de cette liste (jamais de l'utilisateur).
 const ADMIN_TABLES = {
   ads: {
-    columns: ['company_id', 'category_id', 'title', 'short_description', 'description'],
+    columns: ['company_id', 'category_id', 'contact_id', 'title', 'short_description', 'description', 'location', 'working_time', 'salary'],
     list: `SELECT ads.id, ads.title, companies.name AS company_name, categories.name AS category_name,
              (SELECT COUNT(*) FROM applications WHERE applications.ad_id = ads.id)::int AS applications_count
            FROM ads
