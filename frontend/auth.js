@@ -35,9 +35,11 @@ loginForm.addEventListener("submit", async function (event) {
             localStorage.setItem("token", answer.result.token);
             localStorage.setItem("user", JSON.stringify(answer.result.user));
             showMessage(loginForm, "Connexion réussie !", "success");
-            window.location.href = "compte.html";
-        } else if (answer.status === 404) {
-            showMessage(loginForm, "La connexion n'existe pas encore côté serveur (route /auth/login manquante).", "error");
+            if (answer.result.user.is_admin) {
+                window.location.href = "admin.html";
+            } else {
+                window.location.href = "index.html";
+            }
         } else {
             showMessage(loginForm, answer.result.error || "Email ou mot de passe incorrect.", "error");
         }
@@ -77,8 +79,6 @@ registerForm.addEventListener("submit", async function (event) {
             showTab("login-form");
             document.getElementById("login-email").value = data.email;
             showMessage(loginForm, "Compte créé ! Vous pouvez vous connecter.", "success");
-        } else if (answer.status === 404) {
-            showMessage(registerForm, "La création de compte n'existe pas encore côté serveur (route /auth/register manquante).", "error");
         } else {
             showMessage(registerForm, answer.result.error || "Impossible de créer le compte.", "error");
         }
