@@ -53,6 +53,7 @@ function toggleApplyForm(card, button) {
         form.elements.first_name.value = user.first_name;
         form.elements.last_name.value = user.last_name;
         form.elements.email.value = user.email;
+        form.elements.phone.value = user.phone || "";
     }
 }
 

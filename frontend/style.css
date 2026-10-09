@@ -404,26 +404,6 @@ main > .section-title:first-child {
     border-color: var(--primary);
 }
 
-.password-box {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    margin-top: 24px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-}
-
-.password-box h3 {
-    margin: 0 0 4px;
-    font-size: 18px;
-}
-
-.password-box p {
-    margin: 0;
-    color: var(--muted);
-}
-
 .form-actions {
     display: flex;
     justify-content: space-between;
@@ -596,7 +576,6 @@ footer {
         padding: 24px;
     }
 
-    .password-box,
     .form-actions {
         flex-wrap: wrap;
     }
