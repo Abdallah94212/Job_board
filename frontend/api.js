@@ -1,7 +1,14 @@
 const API_URL = "http://localhost:3000";
 
 async function getJSON(path) {
-    const response = await fetch(API_URL + path);
+    const headers = {};
+
+    const token = localStorage.getItem("token");
+    if (token) {
+        headers.Authorization = "Bearer " + token;
+    }
+
+    const response = await fetch(API_URL + path, { headers: headers });
     if (!response.ok) {
         const error = new Error("Erreur " + response.status + " sur " + path);
         error.status = response.status;

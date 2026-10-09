@@ -47,7 +47,9 @@ document.getElementById("today").textContent = new Date().toLocaleDateString("fr
 });
 
 const admin = getCurrentUser();
-if (admin) {
+if (!admin || !admin.is_admin) {
+    window.location.href = "connexion.html";
+} else {
     document.getElementById("admin-name").textContent = admin.first_name + " " + admin.last_name;
     document.getElementById("admin-avatar").textContent = admin.first_name.charAt(0);
 }
@@ -185,6 +187,10 @@ async function loadTable() {
         filterRows();
     } catch (error) {
         console.error(error);
+        if (error.status === 401 || error.status === 403) {
+            window.location.href = "connexion.html";
+            return;
+        }
         tableCount.textContent = "";
         showMessage(tableCard, "Impossible de charger la table. Le backend est-il lancé ?", "error");
     }
