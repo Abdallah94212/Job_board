@@ -27,6 +27,10 @@ async function toggleDetails(card, adId, button) {
         details.querySelector(".detail-company").textContent = ad.company_name;
         details.querySelector(".detail-category").textContent = ad.category_name;
         details.querySelector(".detail-description").textContent = ad.description;
+        details.querySelector(".detail-location").textContent = ad.location;
+        details.querySelector(".detail-working-time").textContent = ad.working_time;
+        details.querySelector(".detail-salary").textContent = ad.salary + " € brut par an";
+        details.querySelector(".detail-contact").textContent = ad.contact_name + " (" + ad.contact_email + ")";
         showMessage(details, "", "");
         list.hidden = false;
     } catch (error) {

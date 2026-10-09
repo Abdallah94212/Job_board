@@ -14,22 +14,26 @@ CREATE TABLE categories (
   name VARCHAR(100) NOT NULL
 );
 
--- Les annonces : chacune appartient à une entreprise et à une catégorie
-CREATE TABLE ads (
-  id                SERIAL PRIMARY KEY,
-  company_id        INTEGER NOT NULL REFERENCES companies(id),
-  category_id       INTEGER NOT NULL REFERENCES categories(id),
-  title             VARCHAR(150) NOT NULL,
-  short_description VARCHAR(255) NOT NULL,
-  description       TEXT NOT NULL
-);
-
--- Les personnes qui postulent
+-- Les personnes : celles qui postulent et celles qui sont responsables d'une annonce
 CREATE TABLE people (
   id         SERIAL PRIMARY KEY,
   first_name VARCHAR(50) NOT NULL,
   last_name  VARCHAR(50) NOT NULL,
   email      VARCHAR(255) NOT NULL UNIQUE
+);
+
+-- Les annonces : chacune appartient à une entreprise, à une catégorie et a un responsable (contact_id)
+CREATE TABLE ads (
+  id                SERIAL PRIMARY KEY,
+  company_id        INTEGER NOT NULL REFERENCES companies(id),
+  category_id       INTEGER NOT NULL REFERENCES categories(id),
+  contact_id        INTEGER NOT NULL REFERENCES people(id),
+  title             VARCHAR(150) NOT NULL,
+  short_description VARCHAR(255) NOT NULL,
+  description       TEXT NOT NULL,
+  location          VARCHAR(100) NOT NULL,
+  working_time      VARCHAR(50) NOT NULL,
+  salary            INTEGER NOT NULL
 );
 
 -- Les candidatures : qui a postulé à quelle annonce, avec quel message, quand
