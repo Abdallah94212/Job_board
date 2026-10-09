@@ -61,8 +61,8 @@ app.get('/companies/:id/ads', async (req, res) => {
   res.json(result.rows);
 });
 
-// POST /ads : créer une annonce
-app.post('/ads', async (req, res) => {
+// POST /ads : créer une annonce (réservé à l'admin)
+app.post('/ads', loggedIn, adminOnly, async (req, res) => {
   const { company_id, category_id, contact_id, title, short_description, description, location, working_time, salary } = req.body || {}; // {} si aucun JSON n'est envoyé
 
   if (!company_id || !category_id || !contact_id || !title || !short_description || !description || !location || !working_time || !salary) {
@@ -169,8 +169,28 @@ app.post('/auth/login', async (req, res) => {
 });
 
 // ---------- Administration : CRUD sur toutes les tables ----------
-// ATTENTION : ces routes ne sont pas encore protégées. Quand la connexion (Step 06)
-// existera, il faudra vérifier que la personne est administrateur avant chaque route.
+
+// Middleware : vérifie le jeton envoyé dans l'en-tête « Authorization: Bearer <jeton> »
+function loggedIn(req, res, next) {
+  const token = (req.headers.authorization || '').replace('Bearer ', '');
+  try {
+    req.user = jwt.verify(token, process.env.JWT_SECRET); // { id, is_admin }
+  } catch (err) {
+    return res.status(401).json({ error: 'Vous devez être connecté' });
+  }
+  next();
+}
+
+// Middleware : à placer après loggedIn, laisse passer seulement les administrateurs
+function adminOnly(req, res, next) {
+  if (!req.user.is_admin) {
+    return res.status(403).json({ error: 'Réservé aux administrateurs' });
+  }
+  next();
+}
+
+// Toutes les routes qui commencent par /admin sont protégées
+app.use('/admin', loggedIn, adminOnly);
 
 // Pour chaque table : les colonnes modifiables et la requête de la liste.
 // Les noms de tables et de colonnes viennent UNIQUEMENT de cette liste (jamais de l'utilisateur).
