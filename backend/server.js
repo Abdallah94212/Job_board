@@ -1,6 +1,8 @@
 // API du Job Board
 const express = require('express');
 const db = require('./db');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const cors = require('cors');
@@ -113,6 +115,59 @@ app.post('/ads/:id/applications', async (req, res) => {
   res.status(201).json(result.rows[0]);
 });
 
+// POST /auth/register : créer un compte
+app.post('/auth/register', async (req, res) => {
+  const { first_name, last_name, email, password } = req.body || {};
+
+  if (!first_name || !last_name || !email || !password) {
+    return res.status(400).json({ error: 'Champs obligatoires : first_name, last_name, email, password' });
+  }
+
+  const existing = await db.query('SELECT id FROM people WHERE email = $1', [email]);
+  if (existing.rows.length > 0) {
+    return res.status(409).json({ error: 'Cet email est déjà utilisé' });
+  }
+
+  // On ne stocke jamais le mot de passe : seulement son hash
+  const password_hash = await bcrypt.hash(password, 10);
+  const result = await db.query(
+    `INSERT INTO people (first_name, last_name, email, password_hash)
+     VALUES ($1, $2, $3, $4)
+     RETURNING id, first_name, last_name, email`,
+    [first_name, last_name, email, password_hash]
+  );
+  res.status(201).json(result.rows[0]);
+});
+
+// POST /auth/login : se connecter, renvoie un jeton (token) et l'utilisateur
+app.post('/auth/login', async (req, res) => {
+  const { email, password } = req.body || {};
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Champs obligatoires : email, password' });
+  }
+
+  const result = await db.query('SELECT * FROM people WHERE email = $1', [email]);
+  const person = result.rows[0];
+
+  // Même message si l'email est inconnu, s'il n'a pas de compte ou si le mot de passe est faux
+  if (!person || !person.password_hash || !(await bcrypt.compare(password, person.password_hash))) {
+    return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+  }
+
+  const token = jwt.sign({ id: person.id, is_admin: person.is_admin }, process.env.JWT_SECRET, { expiresIn: '1d' });
+  res.json({
+    token,
+    user: {
+      id: person.id,
+      first_name: person.first_name,
+      last_name: person.last_name,
+      email: person.email,
+      is_admin: person.is_admin
+    }
+  });
+});
+
 // ---------- Administration : CRUD sur toutes les tables ----------
 // ATTENTION : ces routes ne sont pas encore protégées. Quand la connexion (Step 06)
 // existera, il faudra vérifier que la personne est administrateur avant chaque route.
@@ -217,6 +272,7 @@ app.get('/admin/:table/:id', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Ligne introuvable' });
     }
+    delete result.rows[0].password_hash; // ne jamais renvoyer le hash du mot de passe
     res.json(result.rows[0]);
   } catch (err) {
     sendDbError(res, err);
@@ -245,6 +301,7 @@ app.post('/admin/:table', async (req, res) => {
        RETURNING *`,
       values
     );
+    delete result.rows[0].password_hash; // ne jamais renvoyer le hash du mot de passe
     res.status(201).json(result.rows[0]);
   } catch (err) {
     sendDbError(res, err);
@@ -276,6 +333,7 @@ app.put('/admin/:table/:id', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Ligne introuvable' });
     }
+    delete result.rows[0].password_hash; // ne jamais renvoyer le hash du mot de passe
     res.json(result.rows[0]);
   } catch (err) {
     sendDbError(res, err);

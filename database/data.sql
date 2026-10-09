@@ -18,6 +18,13 @@ INSERT INTO people (first_name, last_name, email, phone) VALUES
   ('Camille', 'Martin', 'camille.martin@nebula.example', '04 72 00 00 01'), -- id 4 : responsable chez Nébula Studio
   ('Hugo', 'Bernard', 'hugo.bernard@vertigo.example', '01 40 00 00 02');    -- id 5 : responsable chez Vertigo Data
 
+-- Comptes de démonstration. Le mot de passe est stocké haché avec bcrypt, jamais en clair.
+-- Inès (id 1) : mot de passe ines1234
+UPDATE people SET password_hash = '$2b$10$.1fAex.zNt9r3Bk3C8IT9O9mM3jR4ZyefPSk13IhAg7aUL3uEjx8K' WHERE id = 1;
+-- L'administrateur (id 6) : admin@tremplin.example, mot de passe admin1234
+INSERT INTO people (first_name, last_name, email, password_hash, is_admin) VALUES
+  ('Admin', 'Tremplin', 'admin@tremplin.example', '$2b$10$M6hCtXmUEWq8qRTvLaeNpuAkmrKNKy4NpxNuLOldv1JMyLKx5Qf9y', TRUE);
+
 -- (company_id, category_id, contact_id, title, short_description, description, location, working_time, salary)
 INSERT INTO ads (company_id, category_id, contact_id, title, short_description, description, location, working_time, salary) VALUES
   (1, 1, 4, 'Développeur full-stack JavaScript',
