@@ -457,6 +457,15 @@ app.delete('/admin/:table/:id', async (req, res) => {
   }
 });
 
+// Erreurs imprévues : on répond toujours en JSON, jamais avec une page HTML
+app.use((err, req, res, next) => {
+  if (err.code === '22P02' || err.type === 'entity.parse.failed') { // texte à la place d'un nombre (ex. /ads/abc), ou JSON mal écrit
+    return res.status(400).json({ error: 'Donnée invalide' });
+  }
+  console.error(err);
+  res.status(500).json({ error: 'Erreur du serveur' });
+});
+
 app.listen(process.env.PORT, () => {
   console.log(`API lancée sur http://localhost:${process.env.PORT}`);
 });
