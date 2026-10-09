@@ -112,22 +112,17 @@ function createAdCard(ad) {
 }
 
 async function loadAds() {
-    let companyIds = COMPANY_IDS;
     if (selectedCompany) {
-        companyIds = [selectedCompany];
         showAllLink.hidden = false;
     }
 
     try {
-        const ads = [];
+        let ads = await getJSON("/ads");
 
-        for (const companyId of companyIds) {
-            const companyAds = await getJSON("/companies/" + companyId + "/ads");
-
-            for (const shortAd of companyAds) {
-                const ad = await getJSON("/ads/" + shortAd.id);
-                ads.push(ad);
-            }
+        if (selectedCompany) {
+            ads = ads.filter(function (ad) {
+                return ad.company_id === selectedCompany;
+            });
         }
 
         if (ads.length === 0) {
@@ -149,11 +144,7 @@ async function loadAds() {
     } catch (error) {
         console.error(error);
         adsCount.textContent = "Offres indisponibles.";
-        if (error.status === 404) {
-            showListMessage(adsList, "Cette entreprise n'existe pas.", "error");
-        } else {
-            showListMessage(adsList, "Impossible de charger les annonces. Le backend est-il lancé ?", "error");
-        }
+        showListMessage(adsList, "Impossible de charger les annonces. Le backend est-il lancé ?", "error");
     }
 }
 

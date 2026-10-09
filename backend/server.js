@@ -7,6 +7,25 @@ const cors = require('cors');
 app.use(cors()); // autorise le front (autre port) à appeler l'API
 app.use(express.json()); // lit le JSON envoyé dans le corps des requêtes
 
+// GET /ads : toutes les annonces (page des offres)
+app.get('/ads', async (req, res) => {
+  const result = await db.query(
+    `SELECT ads.id, ads.company_id, ads.title, ads.short_description,
+            companies.name AS company_name, categories.name AS category_name
+     FROM ads
+     JOIN companies ON companies.id = ads.company_id
+     JOIN categories ON categories.id = ads.category_id
+     ORDER BY ads.id`
+  );
+  res.json(result.rows);
+});
+
+// GET /companies : toutes les entreprises
+app.get('/companies', async (req, res) => {
+  const result = await db.query('SELECT * FROM companies ORDER BY id');
+  res.json(result.rows);
+});
+
 // GET /ads/:id : le détail complet d'une annonce
 app.get('/ads/:id', async (req, res) => {
   const result = await db.query(

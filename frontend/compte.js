@@ -78,14 +78,17 @@ async function loadSuggestions() {
     try {
         suggestions.innerHTML = "";
 
-        for (const companyId of COMPANY_IDS) {
-            const companyAds = await getJSON("/companies/" + companyId + "/ads");
-            if (companyAds.length === 0) {
-                continue;
+        const companies = await getJSON("/companies");
+        const ads = await getJSON("/ads");
+
+        companies.forEach(function (company) {
+            const ad = ads.find(function (ad) {
+                return ad.company_id === company.id;
+            });
+            if (ad) {
+                suggestions.appendChild(createSuggestionCard(ad));
             }
-            const ad = await getJSON("/ads/" + companyAds[0].id);
-            suggestions.appendChild(createSuggestionCard(ad));
-        }
+        });
     } catch (error) {
         console.error(error);
         showListMessage(suggestions, "Impossible de charger les offres. Le backend est-il lancé ?", "error");

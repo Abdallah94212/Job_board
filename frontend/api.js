@@ -1,7 +1,5 @@
 const API_URL = "http://localhost:3000";
 
-const COMPANY_IDS = [1, 2];
-
 async function getJSON(path) {
     const response = await fetch(API_URL + path);
     if (!response.ok) {

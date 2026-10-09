@@ -24,24 +24,15 @@ function createCompanyCard(company) {
 
 async function loadCompanies() {
     try {
-        const companies = [];
-
-        for (const companyId of COMPANY_IDS) {
-            const ads = await getJSON("/companies/" + companyId + "/ads");
-
-            let name = "Entreprise n°" + companyId;
-            let category = "";
-            if (ads.length > 0) {
-                const firstAd = await getJSON("/ads/" + ads[0].id);
-                name = firstAd.company_name;
-                category = firstAd.category_name;
-            }
-
-            companies.push({ id: companyId, name: name, category: category, ads: ads });
-        }
+        const companies = await getJSON("/companies");
+        const ads = await getJSON("/ads");
 
         companiesList.innerHTML = "";
         companies.forEach(function (company) {
+            company.ads = ads.filter(function (ad) {
+                return ad.company_id === company.id;
+            });
+            company.category = company.ads.length > 0 ? company.ads[0].category_name : "";
             companiesList.appendChild(createCompanyCard(company));
         });
         companiesCount.textContent = companies.length + " entreprises recrutent en ce moment.";
