@@ -12,7 +12,7 @@ const TABLES = {
     people: {
         title: "Personnes",
         newLabel: "Nouvelle personne",
-        columns: { id: "ID", first_name: "Prénom", last_name: "Nom", email: "Email", applications_count: "Candidatures" }
+        columns: { id: "ID", first_name: "Prénom", last_name: "Nom", email: "Email", phone: "Téléphone", applications_count: "Candidatures" }
     },
     applications: {
         title: "Candidatures",

@@ -86,7 +86,7 @@ app.post('/ads', async (req, res) => {
 
 // POST /ads/:id/applications : postuler à une annonce
 app.post('/ads/:id/applications', async (req, res) => {
-  const { first_name, last_name, email, message } = req.body || {};
+  const { first_name, last_name, email, phone, message } = req.body || {};
 
   if (!first_name || !last_name || !email || !message) {
     return res.status(400).json({ error: 'Champs obligatoires : first_name, last_name, email, message' });
@@ -101,8 +101,8 @@ app.post('/ads/:id/applications', async (req, res) => {
   let person = await db.query('SELECT id FROM people WHERE email = $1', [email]);
   if (person.rows.length === 0) {
     person = await db.query(
-      'INSERT INTO people (first_name, last_name, email) VALUES ($1, $2, $3) RETURNING id',
-      [first_name, last_name, email]
+      'INSERT INTO people (first_name, last_name, email, phone) VALUES ($1, $2, $3, $4) RETURNING id',
+      [first_name, last_name, email, phone || null]
     );
   }
 
@@ -136,7 +136,7 @@ const ADMIN_TABLES = {
   },
   people: {
     columns: ['first_name', 'last_name', 'email'],
-    list: `SELECT people.id, people.first_name, people.last_name, people.email,
+    list: `SELECT people.id, people.first_name, people.last_name, people.email, people.phone,
              (SELECT COUNT(*) FROM applications WHERE applications.person_id = people.id)::int AS applications_count
            FROM people`
   },

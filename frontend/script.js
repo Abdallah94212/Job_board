@@ -61,6 +61,7 @@ async function sendApplication(form, adId) {
         first_name: form.elements.first_name.value,
         last_name: form.elements.last_name.value,
         email: form.elements.email.value,
+        phone: form.elements.phone.value,
         message: form.elements.message.value
     };
 
