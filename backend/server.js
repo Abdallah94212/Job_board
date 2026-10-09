@@ -163,9 +163,90 @@ app.post('/auth/login', async (req, res) => {
       first_name: person.first_name,
       last_name: person.last_name,
       email: person.email,
+      phone: person.phone,
       is_admin: person.is_admin
     }
   });
+});
+
+// ---------- Mon compte : réservé à la personne connectée ----------
+
+// GET /people/:id/applications : mes candidatures
+app.get('/people/:id/applications', loggedIn, async (req, res) => {
+  if (req.user.id !== Number(req.params.id)) {
+    return res.status(403).json({ error: 'Vous ne pouvez voir que vos propres candidatures' });
+  }
+
+  const result = await db.query(
+    `SELECT ads.title, companies.name AS company_name, applications.created_at
+     FROM applications
+     JOIN ads ON ads.id = applications.ad_id
+     JOIN companies ON companies.id = ads.company_id
+     WHERE applications.person_id = $1
+     ORDER BY applications.created_at DESC`,
+    [req.params.id]
+  );
+  res.json(result.rows);
+});
+
+// PUT /people/:id : modifier mon compte (phone et password sont facultatifs)
+app.put('/people/:id', loggedIn, async (req, res) => {
+  if (req.user.id !== Number(req.params.id)) {
+    return res.status(403).json({ error: 'Vous ne pouvez modifier que votre propre compte' });
+  }
+
+  const { first_name, last_name, email, phone, password } = req.body || {};
+  if (!first_name || !last_name || !email) {
+    return res.status(400).json({ error: 'Champs obligatoires : first_name, last_name, email' });
+  }
+
+  try {
+    const result = await db.query(
+      `UPDATE people SET first_name = $1, last_name = $2, email = $3, phone = $4
+       WHERE id = $5
+       RETURNING id, first_name, last_name, email, phone, is_admin`,
+      [first_name, last_name, email, phone || null, req.params.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Compte introuvable' });
+    }
+
+    // Un nouveau mot de passe a été saisi : on enregistre son hash
+    if (password) {
+      const password_hash = await bcrypt.hash(password, 10);
+      await db.query('UPDATE people SET password_hash = $1 WHERE id = $2', [password_hash, req.params.id]);
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    // 23505 : l'email est déjà utilisé par une autre personne
+    if (err.code === '23505') {
+      return res.status(409).json({ error: 'Cet email est déjà utilisé' });
+    }
+    throw err;
+  }
+});
+
+// DELETE /people/:id : supprimer mon compte et mes candidatures
+app.delete('/people/:id', loggedIn, async (req, res) => {
+  if (req.user.id !== Number(req.params.id)) {
+    return res.status(403).json({ error: 'Vous ne pouvez supprimer que votre propre compte' });
+  }
+
+  try {
+    await db.query('DELETE FROM applications WHERE person_id = $1', [req.params.id]);
+    const result = await db.query('DELETE FROM people WHERE id = $1 RETURNING id', [req.params.id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Compte introuvable' });
+    }
+    res.status(204).end();
+  } catch (err) {
+    // 23503 : la personne est encore responsable d'une annonce
+    if (err.code === '23503') {
+      return res.status(409).json({ error: "Impossible : vous êtes responsable d'une annonce" });
+    }
+    throw err;
+  }
 });
 
 // ---------- Administration : CRUD sur toutes les tables ----------

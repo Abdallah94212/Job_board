@@ -14,11 +14,7 @@ function fillAccount() {
     accountForm.elements.first_name.value = user.first_name;
     accountForm.elements.last_name.value = user.last_name;
     accountForm.elements.email.value = user.email;
-    accountForm.elements.phone.value = "";
-    accountForm.elements.city.value = "";
-    accountForm.elements.phone.placeholder = "Pas encore enregistré";
-    accountForm.elements.city.placeholder = "Pas encore enregistré";
-    document.getElementById("password-info").textContent = "Protégé et chiffré";
+    accountForm.elements.phone.value = user.phone || "";
 }
 
 async function loadApplications() {
@@ -66,11 +62,7 @@ async function loadApplications() {
     } catch (error) {
         console.error(error);
         applicationsCount.textContent = "";
-        if (error.status === 404) {
-            showListMessage(applicationsList, "Route GET /people/:id/applications pas encore disponible côté serveur.", "error");
-        } else {
-            showListMessage(applicationsList, "Impossible de charger vos candidatures. Le backend est-il lancé ?", "error");
-        }
+        showListMessage(applicationsList, "Impossible de charger vos candidatures. Le backend est-il lancé ?", "error");
     }
 }
 
@@ -141,7 +133,9 @@ accountForm.addEventListener("submit", async function (event) {
     const data = {
         first_name: accountForm.elements.first_name.value,
         last_name: accountForm.elements.last_name.value,
-        email: accountForm.elements.email.value
+        email: accountForm.elements.email.value,
+        phone: accountForm.elements.phone.value,
+        password: accountForm.elements.password.value
     };
     showMessage(accountForm, "Enregistrement...", "info");
 
@@ -149,9 +143,8 @@ accountForm.addEventListener("submit", async function (event) {
         const answer = await sendJSON("PUT", "/people/" + user.id, data);
         if (answer.status === 200) {
             localStorage.setItem("user", JSON.stringify(answer.result));
+            accountForm.elements.password.value = "";
             showMessage(accountForm, "Modifications enregistrées.", "success");
-        } else if (answer.status === 404) {
-            showMessage(accountForm, "Route PUT /people/:id pas encore disponible côté serveur.", "error");
         } else {
             showMessage(accountForm, answer.result.error || "Impossible d'enregistrer.", "error");
         }
@@ -174,8 +167,6 @@ document.getElementById("delete-button").addEventListener("click", async functio
         const answer = await sendJSON("DELETE", "/people/" + user.id);
         if (answer.status === 204 || answer.status === 200) {
             logout();
-        } else if (answer.status === 404) {
-            showMessage(accountForm, "Route DELETE /people/:id pas encore disponible côté serveur.", "error");
         } else {
             showMessage(accountForm, answer.result.error || "Impossible de supprimer le compte.", "error");
         }
@@ -183,10 +174,6 @@ document.getElementById("delete-button").addEventListener("click", async functio
         console.error(error);
         showMessage(accountForm, "Impossible de joindre le serveur. Le backend est-il lancé ?", "error");
     }
-});
-
-document.getElementById("password-button").addEventListener("click", function () {
-    showMessage(accountForm, "Le changement de mot de passe arrivera avec la connexion côté serveur (Step 06).", "info");
 });
 
 document.getElementById("logout-button").addEventListener("click", logout);
