@@ -2,22 +2,22 @@ const TABLES = {
     ads: {
         title: "Annonces",
         newLabel: "Nouvelle annonce",
-        columns: { id: "ID", title: "Titre", company_name: "Entreprise", category_name: "Catégorie", applications_count: "Candidatures" }
+        columns: { id: "ID", title: "Titre", company_name: "Entreprise", category_name: "Catégorie" }
     },
     companies: {
         title: "Entreprises",
         newLabel: "Nouvelle entreprise",
-        columns: { id: "ID", name: "Nom", ads_count: "Annonces" }
+        columns: { id: "ID", name: "Nom" }
     },
     categories: {
         title: "Catégories",
         newLabel: "Nouvelle catégorie",
-        columns: { id: "ID", name: "Nom", ads_count: "Annonces" }
+        columns: { id: "ID", name: "Nom" }
     },
     people: {
         title: "Personnes",
         newLabel: "Nouvelle personne",
-        columns: { id: "ID", first_name: "Prénom", last_name: "Nom", email: "Email", phone: "Téléphone", applications_count: "Candidatures" }
+        columns: { id: "ID", first_name: "Prénom", last_name: "Nom", email: "Email", phone: "Téléphone" }
     },
     applications: {
         title: "Candidatures",
@@ -40,11 +40,6 @@ const tableBody = document.getElementById("table-body");
 const pageInfo = document.getElementById("page-info");
 const pagination = document.getElementById("pagination");
 const newButton = document.getElementById("new-button");
-const search = document.getElementById("search");
-
-document.getElementById("today").textContent = new Date().toLocaleDateString("fr-FR", {
-    weekday: "long", day: "numeric", month: "long", year: "numeric"
-});
 
 const admin = getCurrentUser();
 if (!admin || !admin.is_admin) {
@@ -54,18 +49,6 @@ if (!admin || !admin.is_admin) {
     document.getElementById("admin-avatar").textContent = admin.first_name.charAt(0);
 }
 document.getElementById("admin-logout").addEventListener("click", logout);
-
-async function loadStats() {
-    try {
-        const stats = await getJSON("/admin/stats");
-        for (const name in stats) {
-            document.getElementById("stat-" + name).textContent = stats[name];
-            document.getElementById("count-" + name).textContent = stats[name];
-        }
-    } catch (error) {
-        console.error(error);
-    }
-}
 
 function formatValue(key, value) {
     if (key === "created_at") {
@@ -142,13 +125,6 @@ function updatePagination(total, shown) {
     pagination.appendChild(createPageButton("Suivant", currentPage + 1, currentPage === pages, false));
 }
 
-function filterRows() {
-    const text = search.value.toLowerCase();
-    for (const tr of tableBody.children) {
-        tr.hidden = !tr.textContent.toLowerCase().includes(text);
-    }
-}
-
 async function loadTable() {
     const config = TABLES[currentTable];
     tableTitle.textContent = config.title;
@@ -184,7 +160,6 @@ async function loadTable() {
             showMessage(tableCard, "Aucune ligne dans cette table.", "info");
         }
         updatePagination(data.total, data.rows.length);
-        filterRows();
     } catch (error) {
         console.error(error);
         if (error.status === 401 || error.status === 403) {
@@ -251,7 +226,6 @@ async function saveForm(form) {
     if (answer.status === 200 || answer.status === 201) {
         closeForm();
         await loadTable();
-        loadStats();
         showMessage(tableCard, "Enregistré dans la base de données.", "success");
     } else {
         showMessage(form, answer.result.error || "Impossible d'enregistrer.", "error");
@@ -267,7 +241,6 @@ async function deleteRow(id) {
         const answer = await sendJSON("DELETE", "/admin/" + currentTable + "/" + id);
         if (answer.status === 204) {
             await loadTable();
-            loadStats();
             showMessage(tableCard, "Ligne n°" + id + " supprimée.", "success");
         } else {
             showMessage(tableCard, answer.result.error || "Impossible de supprimer.", "error");
@@ -286,7 +259,6 @@ document.querySelectorAll(".side-link[data-table]").forEach(function (link) {
         link.classList.add("active");
         currentTable = link.dataset.table;
         currentPage = 1;
-        search.value = "";
         closeForm();
         loadTable();
     });
@@ -304,7 +276,4 @@ newButton.addEventListener("click", function () {
     openForm(null);
 });
 
-search.addEventListener("input", filterRows);
-
-loadStats();
 loadTable();

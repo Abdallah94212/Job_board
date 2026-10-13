@@ -16,29 +16,14 @@
       <a href="index.html" class="logo"><span class="logo-icon">T</span> Tremplin</a>
       <nav class="nav-links">
         <a href="index.html">Offres</a>
-        <a href="entreprises.html">Entreprises</a>
       </nav>
       <a href="connexion.html" class="btn btn-primary btn-small user-chip" id="nav-user">Se connecter</a>
     </div>
   </header>
 
-  <section class="hero">
-    <div class="container">
-      <span class="avatar avatar-big" id="hero-avatar">?</span>
-      <div>
-        <h1 id="hero-name">Bonjour</h1>
-        <p id="hero-subtitle">Connectez-vous pour voir votre compte.</p>
-      </div>
-      <div class="hero-actions">
-        <a href="index.html" class="btn btn-yellow">Voir les offres</a>
-        <button type="button" class="btn btn-outline-light" id="logout-button" hidden>Se déconnecter</button>
-      </div>
-    </div>
-  </section>
-
-  <main class="container account-grid">
-    <section class="card">
-      <h2>Mon compte</h2>
+  <main class="container auth-page">
+    <section class="card auth-card">
+      <h2 id="account-title">Créer un compte</h2>
       <p class="subtitle">Ces informations remplissent vos candidatures.</p>
 
       <form id="account-form">
@@ -55,38 +40,20 @@
           <input type="email" id="email" name="email" required>
         </div>
         <div class="field">
-          <label for="phone">Téléphone</label>
+          <label for="phone">Téléphone (facultatif)</label>
           <input type="tel" id="phone" name="phone">
         </div>
         <div class="field">
-          <label for="password">Nouveau mot de passe (laisser vide pour le garder)</label>
-          <input type="password" id="password" name="password">
+          <label for="password" id="password-label">Mot de passe (8 caractères minimum)</label>
+          <input type="password" id="password" name="password" minlength="8" required>
         </div>
 
         <p class="form-message"></p>
-        <div class="form-actions">
-          <button type="button" class="btn btn-light" id="delete-button">Supprimer mon compte</button>
-          <button type="submit" class="btn btn-primary">Enregistrer</button>
-        </div>
+        <button type="submit" class="btn btn-primary btn-full">Enregistrer</button>
       </form>
+
+      <button type="button" class="btn btn-light btn-full" id="logout-button" hidden>Se déconnecter</button>
     </section>
-
-    <div>
-      <section class="card">
-        <div class="card-header">
-          <h2>Mes candidatures</h2>
-          <span class="count" id="applications-count"></span>
-        </div>
-        <ul class="applications" id="applications-list">
-          <li>Connectez-vous pour voir vos candidatures.</li>
-        </ul>
-      </section>
-
-      <h2 class="section-title">Offres qui pourraient vous plaire</h2>
-      <div class="offers-grid suggestions" id="suggestions">
-        <p class="form-message info">Chargement des offres...</p>
-      </div>
-    </div>
   </main>
 
   <footer>

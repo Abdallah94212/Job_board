@@ -17,20 +17,16 @@
 
       <p class="side-title">Tables</p>
       <nav class="side-nav">
-        <button type="button" class="side-link active" data-table="ads">Annonces <span id="count-ads">0</span></button>
-        <button type="button" class="side-link" data-table="companies">Entreprises <span
-            id="count-companies">0</span></button>
-        <button type="button" class="side-link" data-table="categories">Catégories <span
-            id="count-categories">0</span></button>
-        <button type="button" class="side-link" data-table="people">Personnes <span id="count-people">0</span></button>
-        <button type="button" class="side-link" data-table="applications">Candidatures <span
-            id="count-applications">0</span></button>
+        <button type="button" class="side-link active" data-table="ads">Annonces</button>
+        <button type="button" class="side-link" data-table="companies">Entreprises</button>
+        <button type="button" class="side-link" data-table="categories">Catégories</button>
+        <button type="button" class="side-link" data-table="people">Personnes</button>
+        <button type="button" class="side-link" data-table="applications">Candidatures</button>
       </nav>
 
       <p class="side-title">Site</p>
       <nav class="side-nav">
         <a href="index.html" class="side-link">Voir le site public</a>
-        <a href="entreprises.html" class="side-link">Page entreprises</a>
         <a href="connexion.html" class="side-link">Page connexion</a>
         <a href="compte.html" class="side-link">Page compte</a>
       </nav>
@@ -45,46 +41,7 @@
     </aside>
 
     <main class="admin-main">
-      <div class="admin-top">
-        <div>
-          <h1>Tableau de bord</h1>
-          <p class="subtitle" id="today"></p>
-        </div>
-        <input type="search" class="search" id="search" placeholder="Rechercher dans cette page">
-      </div>
-
-      <div class="stats">
-        <div class="stat-card">
-          <span class="stat-dot dot-blue"></span>
-          <div>
-            <p>Annonces</p><strong id="stat-ads">0</strong>
-          </div>
-        </div>
-        <div class="stat-card">
-          <span class="stat-dot dot-purple"></span>
-          <div>
-            <p>Entreprises</p><strong id="stat-companies">0</strong>
-          </div>
-        </div>
-        <div class="stat-card">
-          <span class="stat-dot dot-red"></span>
-          <div>
-            <p>Catégories</p><strong id="stat-categories">0</strong>
-          </div>
-        </div>
-        <div class="stat-card">
-          <span class="stat-dot dot-green"></span>
-          <div>
-            <p>Personnes</p><strong id="stat-people">0</strong>
-          </div>
-        </div>
-        <div class="stat-card">
-          <span class="stat-dot dot-yellow"></span>
-          <div>
-            <p>Candidatures</p><strong id="stat-applications">0</strong>
-          </div>
-        </div>
-      </div>
+      <h1 class="admin-title">Tableau de bord</h1>
 
       <form class="card admin-form" id="form-ads" hidden>
         <h2>Nouvelle annonce</h2>
@@ -204,9 +161,6 @@
           <div class="pagination" id="pagination"></div>
         </div>
       </section>
-
-      <p class="admin-note">Les routes admin ne sont pas encore protégées : il faudra les réserver aux administrateurs
-        avec la connexion (Step 06).</p>
     </main>
   </div>
 

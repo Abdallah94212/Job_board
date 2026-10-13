@@ -1,11 +1,6 @@
 const adsList = document.getElementById("ads-list");
 const adsCount = document.getElementById("ads-count");
-const adsTitle = document.getElementById("ads-title");
-const showAllLink = document.getElementById("show-all");
 const adTemplate = document.getElementById("ad-template");
-
-const params = new URLSearchParams(window.location.search);
-const selectedCompany = Number(params.get("company"));
 
 async function toggleDetails(card, adId, button) {
     const details = card.querySelector(".ad-details");
@@ -118,27 +113,13 @@ function createAdCard(ad) {
 }
 
 async function loadAds() {
-    if (selectedCompany) {
-        showAllLink.hidden = false;
-    }
-
     try {
-        let ads = await getJSON("/ads");
-
-        if (selectedCompany) {
-            ads = ads.filter(function (ad) {
-                return ad.company_id === selectedCompany;
-            });
-        }
+        const ads = await getJSON("/ads");
 
         if (ads.length === 0) {
             adsCount.textContent = "Aucune offre pour le moment.";
             showListMessage(adsList, "Aucune annonce à afficher.", "info");
             return;
-        }
-
-        if (selectedCompany) {
-            adsTitle.textContent = "Les offres de " + ads[0].company_name;
         }
 
         adsList.innerHTML = "";
