@@ -1,5 +1,3 @@
-
-
 DROP TABLE IF EXISTS applications, ads, people, categories, companies;
 
 -- Les entreprises

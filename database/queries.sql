@@ -1,4 +1,4 @@
--- Les 3 requêtes boostrap 
+-- Les 3 requêtes du bootstrap
 
 -- 1) Combien d'annonces chaque entreprise a-t-elle publiées ?
 SELECT companies.name, COUNT(ads.id) AS nb_annonces
