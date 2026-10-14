@@ -44,10 +44,12 @@ Chaque bloc de commandes part de la **racine du dépôt** (le dossier qui contie
 
 ```bash
 cd backend
-cp .env.example .env   # puis remplir les 3 variables ci-dessous
+cp .env.example .env
 npm install
 cd ..
 ```
+
+Remplir ensuite les 3 variables de `backend/.env` :
 
 | Variable | Rôle |
 |---|---|
@@ -58,11 +60,16 @@ cd ..
 ### 2. Base de données
 
 ```bash
-createdb jobboard                       # si la base existe déjà, passer cette ligne
-psql jobboard -f database/schema.sql    # crée les 5 tables (et vide la base si elle existait)
-cd backend && npm run seed && cd ..     # remplit la base depuis le backend (Step 04)
-psql jobboard -f database/queries.sql   # exécute les 3 requêtes du bootstrap
+createdb jobboard
+psql jobboard -f database/schema.sql
+cd backend && npm run seed && cd ..
+psql jobboard -f database/queries.sql
 ```
+
+1. `createdb` crée la base (passer cette ligne si elle existe déjà).
+2. `schema.sql` crée les 5 tables, et vide la base si elle existait.
+3. `npm run seed` remplit la base depuis le backend (Step 04).
+4. `queries.sql` exécute les 3 requêtes du bootstrap.
 
 `database/data.sql` contient les mêmes données écrites à la main en SQL (demandé par le bootstrap) : `psql jobboard -f database/data.sql` peut remplacer `npm run seed`. Lancer l'un ou l'autre, pas les deux.
 
@@ -70,8 +77,10 @@ psql jobboard -f database/queries.sql   # exécute les 3 requêtes du bootstrap
 
 ```bash
 cd backend
-npm run dev   # redémarre à chaque modification ; npm start le lance sans surveillance
+npm run dev
 ```
+
+`npm run dev` redémarre l'API à chaque modification ; `npm start` la lance sans surveillance.
 
 L'API répond sur `http://localhost:3000`. Ce terminal reste occupé par l'API : ouvrir un autre terminal pour les autres commandes. Ouvrir ensuite `frontend/index.html` dans le navigateur (ou avec Live Server).
 
