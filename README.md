@@ -362,9 +362,8 @@ Au-delà du développement, notre utilisation de l'IA
 nous a permis de découvrir de nouvelles approches
 et technologies.
 
-Nous nous sommes notamment intéressés aux agents IA,
-à l'automatisation de tâches et au fonctionnement
-des applications SaaS (Software as a Service).
+Nous nous sommes notamment intéressés aux agents IA
+et à l'automatisation de tâches.
 
 Ces explorations nous ont permis de mieux comprendre
 les possibilités et les limites de ces technologies
