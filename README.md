@@ -311,38 +311,76 @@ frontend/
   favicon.svg   icône du site
 ```
 
-## Utilisation de l'IA
+## Utilisation de l'intelligence artificielle
 
-Cette section est commencée pour la soutenance de mi-parcours. Le binôme la complétera pour la soutenance finale.
+Dans le cadre de ce projet, nous avons utilisé l'intelligence
+artificielle comme un outil d'accompagnement, d'apprentissage
+et d'aide au développement.
 
-### Ce qui est documenté (session du 13 octobre 2026)
+Notre démarche consistait à utiliser l'IA de manière raisonnée,
+comme un support technique et pédagogique, tout en conservant
+la maîtrise des choix et du fonctionnement de notre application.
 
-Audit du projet avant la soutenance de mi-parcours. L'IA a :
+### Accompagnement et apprentissage
 
-- comparé le code à l'énoncé et au bootstrap ;
-- relevé du code mort, un texte faux dans la page d'administration, des commandes d'installation qui échouaient dans le README et un risque de perte de données dans l'ancienne suppression de compte ;
-- proposé des simplifications. Une partie a été refusée, pour garder le code existant quand il était déjà simple et correct ;
-- exécuté des tests : requêtes `curl` sur une base de test temporaire, et tests dans le navigateur ;
-- rédigé cette mise à jour du README.
+L'IA nous a accompagnés à différentes étapes du projet :
 
-### Décisions prises par l'étudiant
+- Compréhension de certaines notions techniques.
+- Réflexion sur l'architecture et l'organisation du projet.
+- Aide à la résolution de problèmes et au débogage.
+- Suggestions de simplification et d'amélioration du code.
+- Vérification de la conformité du projet avec les consignes.
+- Accompagnement dans la réalisation des tests.
 
-Ces choix ont été faits par Abdallah, pas par l'IA :
+Nous avons privilégié des solutions adaptées à notre niveau
+et aux compétences acquises durant notre formation.
 
-- supprimer les fonctionnalités que l'énoncé ne demande pas ;
-- déplacer la création de compte dans `compte.html` ;
-- ne pas autoriser la création d'un compte avec un email qui a déjà servi à postuler sans compte.
+L'objectif n'était pas de multiplier les fonctionnalités,
+mais de construire une application fonctionnelle,
+compréhensible et conforme aux attentes.
 
-### Limites et vérifications
+### Corrections et vérifications
 
-- L'IA peut se tromper. Les tests ont été lancés avant les modifications, puis relancés après : 64 vérifications `curl` sur une base de test, et les parcours principaux dans le navigateur. Deux relectures du code ont été faites par l'IA, pas par une personne.
-- Le binôme doit relire chaque fichier et savoir l'expliquer.
+L'intelligence artificielle nous a également servi
+d'outil de relecture et de vérification.
 
-### À compléter par le binôme
+Elle nous a notamment aidés à identifier des erreurs,
+à repérer du code inutile et à proposer certaines corrections.
 
-> Emplacement à remplir par Abdallah et Rayann avant la soutenance finale. Rien n'est encore écrit ici.
+Des tests ont été réalisés sur les routes API et les
+principaux parcours de l'application afin de vérifier
+le bon fonctionnement des fonctionnalités.
 
-- Parties du projet réalisées avant le 13 octobre avec l'aide de l'IA, et comment : *à compléter*
-- Parties écrites sans IA : *à compléter*
-- Vérifications faites par Abdallah : *à compléter*
-- Vérifications faites par Rayann : *à compléter*
+Les suggestions ont été évaluées selon leur pertinence
+et les besoins réels du projet. Certaines propositions
+ont été écartées afin de conserver un code simple
+et cohérent.
+
+### Découverte et exploration
+
+Au-delà du développement, notre utilisation de l'IA
+nous a permis de découvrir de nouvelles approches
+et technologies.
+
+Nous nous sommes notamment intéressés aux agents IA,
+à l'automatisation de tâches et au fonctionnement
+des applications SaaS (Software as a Service).
+
+Ces explorations nous ont permis de mieux comprendre
+les possibilités et les limites de ces technologies
+dans le domaine du développement logiciel.
+
+### Notre démarche
+
+Nous avons considéré l'intelligence artificielle
+comme un assistant technique et un outil d'apprentissage,
+et non comme un substitut à notre réflexion.
+
+Les décisions concernant les fonctionnalités,
+l'organisation du travail et les solutions retenues
+restent sous notre responsabilité.
+
+Cette expérience nous a permis de développer
+notre autonomie, notre capacité à analyser
+des problèmes et notre compréhension des
+outils d'intelligence artificielle.
