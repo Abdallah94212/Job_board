@@ -5,9 +5,10 @@ Projet Job Board d'Epitech : un site d'offres d'emploi (« Tremplin ») avec une
 - les entreprises publient des annonces, chacune avec une catégorie et une personne responsable ;
 - les visiteurs consultent les annonces et postulent avec un message ;
 - les utilisateurs peuvent créer un compte : une fois connectés, le formulaire « Postuler » est déjà rempli ;
-- un administrateur gère toutes les tables depuis une page d'administration qui lui est réservée.
+- un administrateur gère toutes les tables depuis une page d'administration qui lui est réservée ;
+- les routes de l'API sont documentées avec Swagger, et 37 cas de test se rejouent dans Postman.
 
-Le projet ne garde que ce que l'énoncé demande : les ajouts faits en plus (page des entreprises, liste « Mes candidatures », suggestions d'offres, suppression du compte, statistiques et recherche dans l'administration) ont été retirés.
+Le projet se limite à ce que demande l'énoncé, pour rester simple à installer, à tester et à expliquer.
 
 ## Technologies
 
@@ -20,8 +21,9 @@ Le projet ne garde que ce que l'énoncé demande : les ajouts faits en plus (pag
 | bcryptjs | Hachage des mots de passe |
 | jsonwebtoken | Jetons de connexion (JWT) |
 | cors | Autorise le front à appeler l'API |
+| swagger-ui-express | Page de documentation Swagger des routes (`/api-docs`) |
 | HTML, CSS, JavaScript | Front (sans framework) |
-| Postman | Tests des routes |
+| Postman | Tests des routes (collection dans `tests/`) |
 
 ## Choix techniques
 
@@ -30,7 +32,7 @@ Le projet ne garde que ce que l'énoncé demande : les ajouts faits en plus (pag
 | PostgreSQL | Base relationnelle : des clés étrangères relient les annonces aux entreprises, aux catégories et aux personnes, et les candidatures aux annonces et aux personnes. PostgreSQL refuse un lien vers une ligne qui n'existe pas. |
 | Express | Une API REST simple : chaque route associe un verbe HTTP (GET, POST, PUT, DELETE) à un nom de ressource (`/ads`, `/people/:id`), comme le demande l'énoncé. |
 | `pg`, sans ORM | Les requêtes SQL sont écrites à la main dans `server.js`. Les valeurs passent par des paramètres `$1`, `$2`… : PostgreSQL les lit comme des données, jamais comme du SQL. Cela protège contre l'injection SQL. |
-| Front en HTML, CSS et JavaScript, sans framework | Rien à compiler ni à installer côté front. `fetch()` appelle l'API : le détail « Learn more » arrive sans recharger la page. |
+| Front en HTML, CSS et JavaScript, sans framework | Rien à compiler ni à installer côté front. `fetch()` appelle l'API : le détail « Learn more » est demandé à l'API au moment du clic et s'affiche sans recharger la page. |
 | Routes `/admin/:table` génériques | Les mêmes routes servent les 5 tables. Les noms de tables et de colonnes viennent uniquement de la liste `ADMIN_TABLES` écrite dans `server.js` : `Object.hasOwn` refuse tout autre nom de table (404). |
 | Données de démo remplies par le backend | `npm run seed` (`backend/seed.js`) répond à « Fill in the database using your backend ». `database/data.sql` est gardé pour le bootstrap, qui demande d'insérer les données à la main en SQL. |
 
@@ -67,8 +69,8 @@ psql jobboard -f database/queries.sql
 ```
 
 1. `createdb` crée la base (passer cette ligne si elle existe déjà).
-2. `schema.sql` crée les 5 tables, et vide la base si elle existait.
-3. `npm run seed` remplit la base depuis le backend (Step 04).
+2. `schema.sql` crée les 5 tables ; si elles existaient déjà, il les recrée et leurs données sont effacées.
+3. `npm run seed` remplit la base depuis le backend, comme le demande l'énoncé.
 4. `queries.sql` exécute les 3 requêtes du bootstrap.
 
 `database/data.sql` contient les mêmes données écrites à la main en SQL (demandé par le bootstrap) : `psql jobboard -f database/data.sql` peut remplacer `npm run seed`. Lancer l'un ou l'autre, pas les deux.
@@ -82,7 +84,7 @@ npm run dev
 
 `npm run dev` redémarre l'API à chaque modification ; `npm start` la lance sans surveillance.
 
-L'API répond sur `http://localhost:3000`. Ce terminal reste occupé par l'API : ouvrir un autre terminal pour les autres commandes. Ouvrir ensuite `frontend/index.html` dans le navigateur (ou avec Live Server).
+L'API répond sur `http://localhost:3000`, et sa documentation Swagger sur `http://localhost:3000/api-docs`. Ce terminal reste occupé par l'API : ouvrir un autre terminal pour les autres commandes. Ouvrir ensuite `frontend/index.html` dans le navigateur (ou avec Live Server).
 
 ### Comptes de démonstration
 
@@ -93,13 +95,13 @@ L'API répond sur `http://localhost:3000`. Ce terminal reste occupé par l'API :
 
 Les mots de passe sont stockés hachés avec bcrypt, jamais en clair.
 
-## Les steps de l'énoncé
+## Correspondance avec l'énoncé
 
-| Step | Contenu | Où |
+| Étape | Contenu | Où |
 |---|---|---|
 | 01 | Base de données : annonces, entreprises, catégories, personnes (candidats et responsables d'annonces), candidatures | `database/schema.sql` |
 | 02 | Page qui affiche les annonces : titre, description courte, bouton « Learn more » | `index.html`, `style.css` |
-| 03 | « Learn more » affiche tout le détail (description, salaire, lieu, temps de travail, responsable) sans recharger la page ni ouvrir de popup | `script.js` |
+| 03 | Au clic sur « Learn more », `fetch()` appelle `GET /ads/:id` puis affiche tout le détail (description, salaire, lieu, temps de travail, responsable) sans recharger la page ni ouvrir de popup | `script.js` |
 | 04 | API REST avec CRUD ; « Learn more » appelle `GET /ads/:id` ; base remplie depuis le backend (`npm run seed`) | `backend/server.js`, `backend/seed.js` |
 | 05 | Bouton « Postuler » : nom, email, téléphone et message, enregistrés en base | `index.html`, `script.js` |
 | 06 | Inscription dans `compte.html`, connexion dans `connexion.html`, modification du compte dans `compte.html` ; une fois connecté, le formulaire « Postuler » est pré-rempli | `connexion.html`, `compte.html`, `auth.js`, `compte.js`, `script.js` |
@@ -156,7 +158,7 @@ Les routes protégées attendent l'en-tête `Authorization: Bearer <jeton>`, où
 }
 ```
 
-Si l'email est inconnu, la personne est créée ; sinon, elle est réutilisée.
+Si l'email est inconnu, la personne est créée ; sinon, elle est réutilisée, et le nom et le téléphone saisis sont ignorés.
 
 ### Connexion
 
@@ -222,6 +224,16 @@ Avec `POST /ads`, un `company_id`, `category_id` ou `contact_id` qui n'existe pa
 
 409 sur les routes `/admin` : un lien vers un id qui n'existe pas, une ligne encore utilisée par une autre table (par exemple, supprimer une personne encore responsable d'une annonce), ou un email déjà pris.
 
+## Documentation Swagger
+
+Swagger affiche toutes les routes de l'API sur une page web, et permet de les tester sans Postman. La description des routes (verbes, paramètres, corps attendus, réponses et codes) est écrite directement dans `backend/swagger.json` : elle n'est pas générée à partir du code, il faut donc la modifier si une route change. Dans `server.js`, le paquet `swagger-ui-express` transforme ce fichier en page web, servie par l'API elle-même.
+
+1. Lancer l'API, puis ouvrir `http://localhost:3000/api-docs`.
+2. Ouvrir une route, cliquer sur **Try it out**, remplir les paramètres ou le corps, puis **Execute** : Swagger envoie la vraie requête à l'API et affiche le code et la réponse.
+3. Routes protégées (cadenas) : lancer d'abord `POST /auth/login` (un exemple admin est proposé), copier le `token` de la réponse, cliquer sur **Authorize** et le coller.
+
+Les tests depuis Swagger modifient la base, comme ceux de Postman.
+
 ## Pages du front
 
 | Page | Rôle |
@@ -250,11 +262,15 @@ Limites connues :
 - le jeton reste valable jusqu'à son expiration, même après la déconnexion : « Se déconnecter » vide seulement le `localStorage` ;
 - les emails ne sont pas vérifiés : rien ne prouve qu'une personne possède l'email qu'elle saisit.
 
-## Tests dans Postman
+## Tests des routes
 
-Lancer `schema.sql` puis `npm run seed` avant les tests. Les tests modifient la base : relancer ces deux commandes pour revenir aux données de départ. Faire les tests dans l'ordre (par exemple, la catégorie créée au test 28 reçoit l'id 3).
+Les 37 cas ci-dessous sont dans la collection Postman `tests/tremplin.postman_collection.json`, dans le même ordre ; chaque requête vérifie le code attendu. Ils ont été rejoués le 18 octobre 2026 sur une base neuve : 37 sur 37.
 
-Pour les routes protégées, copier le `token` renvoyé par `POST /auth/login` dans l'onglet **Authorization** de Postman (type *Bearer Token*).
+1. Repartir d'une base neuve : lancer `database/schema.sql`, puis `npm run seed` (voir l'installation).
+2. Lancer l'API avec `npm run dev`.
+3. Dans Postman : **Import**, choisir le fichier de la collection, puis **Run**. Les jetons de l'admin et d'Inès sont gardés automatiquement (cas 14 et 15).
+
+Les tests modifient la base (par exemple, le cas 37 change le mot de passe d'Inès) : relancer `schema.sql` et `npm run seed` pour revenir aux données de départ. Les cas se font dans l'ordre (par exemple, la catégorie créée au cas 28 reçoit l'id 3). Chaque route peut aussi se tester à la main dans Swagger (`/api-docs`).
 
 | # | Requête | Attendu |
 |---|---|---|
@@ -307,6 +323,7 @@ backend/
   server.js     les routes de l'API
   db.js         connexion à PostgreSQL
   seed.js       remplissage de la base depuis le backend (npm run seed)
+  swagger.json  la documentation Swagger des routes (affichée sur /api-docs)
   package.json  dépendances et scripts
   .env.example  modèle de configuration
 frontend/
@@ -318,77 +335,32 @@ frontend/
   admin.js      administration (admin.html)
   style.css     le style de toutes les pages
   favicon.svg   icône du site
+tests/
+  tremplin.postman_collection.json   les 37 cas de test, à importer dans Postman
+presentation/
+  Tremplin-soutenance.pdf (et .pptx) le support de la soutenance
 ```
 
 ## Utilisation de l'intelligence artificielle
 
-Dans le cadre de ce projet, nous avons utilisé l'intelligence
-artificielle comme un outil d'accompagnement, d'apprentissage
-et d'aide au développement.
+Nous avons utilisé l'intelligence artificielle comme un outil d'accompagnement et d'apprentissage, de manière raisonnée : un support technique et pédagogique, en gardant la maîtrise des choix et du fonctionnement de notre application.
 
-Notre démarche consistait à utiliser l'IA de manière raisonnée,
-comme un support technique et pédagogique, tout en conservant
-la maîtrise des choix et du fonctionnement de notre application.
+### À quoi elle nous a servi
 
-### Accompagnement et apprentissage
+- Comprendre certaines notions techniques (par exemple les jetons JWT, les clés étrangères, CORS ou les codes HTTP).
+- Réfléchir à l'organisation du projet.
+- Chercher l'origine d'une erreur et proposer des corrections.
+- Relire le code, repérer du code inutile et vérifier la conformité avec l'énoncé.
+- Préparer des fichiers que nous avons ensuite relus et testés : la documentation Swagger (`backend/swagger.json`) et la collection Postman (`tests/`).
 
-L'IA nous a accompagnés à différentes étapes du projet :
+Chaque suggestion a été évaluée selon les besoins réels du projet. Certaines ont été écartées pour garder un code simple et cohérent.
 
-- Compréhension de certaines notions techniques.
-- Réflexion sur l'architecture et l'organisation du projet.
-- Aide à la résolution de problèmes et au débogage.
-- Suggestions de simplification et d'amélioration du code.
-- Vérification de la conformité du projet avec les consignes.
-- Accompagnement dans la réalisation des tests.
+### Ce que nous avons essayé
 
-Nous avons privilégié des solutions adaptées à notre niveau
-et aux compétences acquises durant notre formation.
+Nous nous sommes intéressés aux agents IA, à qui l'on confie une tâche complète : par exemple, comparer le code à l'énoncé ou relancer nos tests. Cela nous a aidés à repérer des oublis, mais c'est resté une expérimentation : le projet ne dépend d'aucun agent ni d'aucune automatisation par IA.
 
-L'objectif n'était pas de multiplier les fonctionnalités,
-mais de construire une application fonctionnelle,
-compréhensible et conforme aux attentes.
+### Ce que nous en retenons
 
-### Corrections et vérifications
+Une proposition de l'IA peut avoir l'air juste et être fausse. Par exemple, une première version de nos slides, préparée avec l'IA, citait une fonction de recherche, une route et un lien entre deux tables qui n'existent pas dans notre code ; nous l'avons vu en la comparant au code. Nous ne gardons donc que ce que nous comprenons et que nous avons vérifié.
 
-L'intelligence artificielle nous a également servi
-d'outil de relecture et de vérification.
-
-Elle nous a notamment aidés à identifier des erreurs,
-à repérer du code inutile et à proposer certaines corrections.
-
-Des tests ont été réalisés sur les routes API et les
-principaux parcours de l'application afin de vérifier
-le bon fonctionnement des fonctionnalités.
-
-Les suggestions ont été évaluées selon leur pertinence
-et les besoins réels du projet. Certaines propositions
-ont été écartées afin de conserver un code simple
-et cohérent.
-
-### Découverte et exploration
-
-Au-delà du développement, notre utilisation de l'IA
-nous a permis de découvrir de nouvelles approches
-et technologies.
-
-Nous nous sommes notamment intéressés aux agents IA
-et à l'automatisation de tâches.
-
-Ces explorations nous ont permis de mieux comprendre
-les possibilités et les limites de ces technologies
-dans le domaine du développement logiciel.
-
-### Notre démarche
-
-Nous avons considéré l'intelligence artificielle
-comme un assistant technique et un outil d'apprentissage,
-et non comme un substitut à notre réflexion.
-
-Les décisions concernant les fonctionnalités,
-l'organisation du travail et les solutions retenues
-restent sous notre responsabilité.
-
-Cette expérience nous a permis de développer
-notre autonomie, notre capacité à analyser
-des problèmes et notre compréhension des
-outils d'intelligence artificielle.
+Les décisions sur les fonctionnalités, l'organisation du travail et les solutions retenues restent les nôtres.

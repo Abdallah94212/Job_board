@@ -3,11 +3,16 @@ const express = require('express');
 const db = require('./db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 const app = express();
 const cors = require('cors');
 app.use(cors()); // autorise le front (autre port) à appeler l'API
 app.use(express.json()); // lit le JSON envoyé dans le corps des requêtes
+
+// GET /api-docs : la documentation Swagger des routes (décrites dans swagger.json), où l'on peut tester chaque route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // GET /ads : toutes les annonces (page des offres)
 app.get('/ads', async (req, res) => {

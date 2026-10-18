@@ -1,0 +1,1124 @@
+{
+  "info": {
+    "name": "Tremplin · les 37 cas de test du README",
+    "description": "Les cas de la section « Tests » du README, dans le même ordre. Avant de lancer : database/schema.sql puis npm run seed (base neuve), et l'API lancée. Les jetons de l'admin et d'Inès sont gardés automatiquement (cas 14 et 15). Les tests modifient la base.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "token_admin",
+      "value": ""
+    },
+    {
+      "key": "token_ines",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 · Toutes les annonces → 200",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json().length).to.eql(3);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/ads"
+      }
+    },
+    {
+      "name": "02 · Détail de l'annonce 1 → 200",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const a = pm.response.json();",
+              "    pm.expect(a).to.have.property('location');",
+              "    pm.expect(a).to.have.property('working_time');",
+              "    pm.expect(a).to.have.property('salary');",
+              "    pm.expect(a).to.have.property('contact_name');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/ads/1"
+      }
+    },
+    {
+      "name": "03 · Annonce inconnue → 404",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 404', function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/ads/999"
+      }
+    },
+    {
+      "name": "04 · Id qui n'est pas un nombre → 400",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 400', function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/ads/abc"
+      }
+    },
+    {
+      "name": "05 · Annonces de l'entreprise 1 (bootstrap) → 200",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json().length).to.eql(2);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/companies/1/ads"
+      }
+    },
+    {
+      "name": "06 · Entreprise inconnue → 404",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 404', function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/companies/999/ads"
+      }
+    },
+    {
+      "name": "07 · Postuler à l'annonce 1 → 201",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/ads/1/applications",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Sam\",\n  \"last_name\": \"Durand\",\n  \"email\": \"sam.durand@example.com\",\n  \"phone\": \"06 11 22 33 44\",\n  \"message\": \"Bonjour, votre offre m'intéresse.\"\n}"
+        }
+      }
+    },
+    {
+      "name": "08 · Postuler sans message → 400",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 400', function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/ads/1/applications",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Sam\",\n  \"last_name\": \"Durand\",\n  \"email\": \"sam.durand@example.com\",\n  \"phone\": \"06 11 22 33 44\"\n}"
+        }
+      }
+    },
+    {
+      "name": "09 · Postuler à une annonce inconnue → 404",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 404', function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/ads/999/applications",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Sam\",\n  \"last_name\": \"Durand\",\n  \"email\": \"sam.durand@example.com\",\n  \"phone\": \"06 11 22 33 44\",\n  \"message\": \"Bonjour, votre offre m'intéresse.\"\n}"
+        }
+      }
+    },
+    {
+      "name": "10 · Postuler avec un JSON mal écrit → 400",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 400', function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/ads/1/applications",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"first_name\": \"Sam\","
+        }
+      }
+    },
+    {
+      "name": "11 · Créer un compte → 201",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "    pm.expect(pm.response.json()).to.not.have.property('password_hash');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Léa\",\n  \"last_name\": \"Roux\",\n  \"email\": \"lea.roux@example.com\",\n  \"phone\": \"06 00 00 00 00\",\n  \"password\": \"motdepasse1\"\n}"
+        }
+      }
+    },
+    {
+      "name": "12 · Créer un compte avec l'email d'Inès → 409",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 409', function () {",
+              "    pm.response.to.have.status(409);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Inès\",\n  \"last_name\": \"Haddad\",\n  \"email\": \"ines.haddad@example.com\",\n  \"password\": \"motdepasse1\"\n}"
+        }
+      }
+    },
+    {
+      "name": "13 · Créer un compte sans mot de passe → 400",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 400', function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Léo\",\n  \"last_name\": \"Petit\",\n  \"email\": \"leo.petit@example.com\"\n}"
+        }
+      }
+    },
+    {
+      "name": "14 · Se connecter en admin (garde le jeton) → 200",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json().user.is_admin).to.eql(true);",
+              "});",
+              "pm.collectionVariables.set('token_admin', pm.response.json().token);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@tremplin.example\",\n  \"password\": \"admin1234\"\n}"
+        }
+      }
+    },
+    {
+      "name": "15 · Se connecter en Inès (garde le jeton) → 200",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json().user.is_admin).to.eql(false);",
+              "});",
+              "pm.collectionVariables.set('token_ines', pm.response.json().token);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"ines.haddad@example.com\",\n  \"password\": \"ines1234\"\n}"
+        }
+      }
+    },
+    {
+      "name": "16 · Se connecter avec un mauvais mot de passe → 401",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 401', function () {",
+              "    pm.response.to.have.status(401);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"ines.haddad@example.com\",\n  \"password\": \"faux\"\n}"
+        }
+      }
+    },
+    {
+      "name": "17 · Liste admin sans jeton → 401",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 401', function () {",
+              "    pm.response.to.have.status(401);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/admin/ads"
+      }
+    },
+    {
+      "name": "18 · Liste admin avec un jeton inventé → 401",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 401', function () {",
+              "    pm.response.to.have.status(401);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer abc.def.ghi"
+          }
+        ],
+        "url": "{{baseUrl}}/admin/ads"
+      }
+    },
+    {
+      "name": "19 · Liste admin avec le jeton d'Inès → 403",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 403', function () {",
+              "    pm.response.to.have.status(403);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_ines}}"
+          }
+        ],
+        "url": "{{baseUrl}}/admin/ads"
+      }
+    },
+    {
+      "name": "20 · Liste admin avec le jeton admin → 200",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": "{{baseUrl}}/admin/ads"
+      }
+    },
+    {
+      "name": "21 · Créer une annonce sans jeton → 401",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 401', function () {",
+              "    pm.response.to.have.status(401);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/ads",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"company_id\": 2,\n  \"category_id\": 2,\n  \"contact_id\": 5,\n  \"title\": \"Data analyst\",\n  \"short_description\": \"Créez nos tableaux de bord.\",\n  \"description\": \"SQL et visualisation de données.\",\n  \"location\": \"Paris\",\n  \"working_time\": \"Temps plein\",\n  \"salary\": 42000\n}"
+        }
+      }
+    },
+    {
+      "name": "22 · Créer une annonce avec le jeton d'Inès → 403",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 403', function () {",
+              "    pm.response.to.have.status(403);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_ines}}"
+          }
+        ],
+        "url": "{{baseUrl}}/ads",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"company_id\": 2,\n  \"category_id\": 2,\n  \"contact_id\": 5,\n  \"title\": \"Data analyst\",\n  \"short_description\": \"Créez nos tableaux de bord.\",\n  \"description\": \"SQL et visualisation de données.\",\n  \"location\": \"Paris\",\n  \"working_time\": \"Temps plein\",\n  \"salary\": 42000\n}"
+        }
+      }
+    },
+    {
+      "name": "23 · Créer une annonce (admin) → 201",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": "{{baseUrl}}/ads",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"company_id\": 2,\n  \"category_id\": 2,\n  \"contact_id\": 5,\n  \"title\": \"Data analyst\",\n  \"short_description\": \"Créez nos tableaux de bord.\",\n  \"description\": \"SQL et visualisation de données.\",\n  \"location\": \"Paris\",\n  \"working_time\": \"Temps plein\",\n  \"salary\": 42000\n}"
+        }
+      }
+    },
+    {
+      "name": "24 · Créer une annonce sans salaire (admin) → 400",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 400', function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": "{{baseUrl}}/ads",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"company_id\": 2,\n  \"category_id\": 2,\n  \"contact_id\": 5,\n  \"title\": \"Data analyst\",\n  \"short_description\": \"Créez nos tableaux de bord.\",\n  \"description\": \"SQL et visualisation de données.\",\n  \"location\": \"Paris\",\n  \"working_time\": \"Temps plein\"\n}"
+        }
+      }
+    },
+    {
+      "name": "25 · Créer une annonce avec un responsable inconnu (admin) → 400",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 400', function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": "{{baseUrl}}/ads",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"company_id\": 2,\n  \"category_id\": 2,\n  \"contact_id\": 999,\n  \"title\": \"Data analyst\",\n  \"short_description\": \"Créez nos tableaux de bord.\",\n  \"description\": \"SQL et visualisation de données.\",\n  \"location\": \"Paris\",\n  \"working_time\": \"Temps plein\",\n  \"salary\": 42000\n}"
+        }
+      }
+    },
+    {
+      "name": "26 · Une page de la table categories (admin) → 200",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const p = pm.response.json();",
+              "    pm.expect(p).to.have.all.keys('rows', 'total', 'page', 'limit');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": "{{baseUrl}}/admin/categories?page=1&limit=7"
+      }
+    },
+    {
+      "name": "27 · Table inconnue (admin) → 404",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 404', function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": "{{baseUrl}}/admin/inconnue"
+      }
+    },
+    {
+      "name": "28 · Créer la catégorie Design (admin) → 201",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "    pm.expect(pm.response.json().id).to.eql(3);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": "{{baseUrl}}/admin/categories",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Design\"\n}"
+        }
+      }
+    },
+    {
+      "name": "29 · Renommer la catégorie 3 (admin) → 200",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": "{{baseUrl}}/admin/categories/3",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"UX Design\"\n}"
+        }
+      }
+    },
+    {
+      "name": "30 · Supprimer une catégorie encore utilisée (admin) → 409",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 409', function () {",
+              "    pm.response.to.have.status(409);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": "{{baseUrl}}/admin/categories/1"
+      }
+    },
+    {
+      "name": "31 · Supprimer la catégorie 3 (admin) → 204",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 204', function () {",
+              "    pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": "{{baseUrl}}/admin/categories/3"
+      }
+    },
+    {
+      "name": "32 · Voir la personne 6 sans son hash (admin) → 200",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json()).to.not.have.property('password_hash');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}"
+          }
+        ],
+        "url": "{{baseUrl}}/admin/people/6"
+      }
+    },
+    {
+      "name": "33 · Modifier le compte d'Inès sans jeton → 401",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 401', function () {",
+              "    pm.response.to.have.status(401);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/people/1",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Inès\",\n  \"last_name\": \"Haddad\",\n  \"email\": \"ines.haddad@example.com\"\n}"
+        }
+      }
+    },
+    {
+      "name": "34 · Inès prend l'email de Tom → 409",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 409', function () {",
+              "    pm.response.to.have.status(409);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_ines}}"
+          }
+        ],
+        "url": "{{baseUrl}}/people/1",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Inès\",\n  \"last_name\": \"Haddad\",\n  \"email\": \"tom.lefevre@example.com\"\n}"
+        }
+      }
+    },
+    {
+      "name": "35 · Inès oublie son email → 400",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 400', function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_ines}}"
+          }
+        ],
+        "url": "{{baseUrl}}/people/1",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Inès\",\n  \"last_name\": \"Haddad\"\n}"
+        }
+      }
+    },
+    {
+      "name": "36 · Inès modifie le compte de Tom → 403",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 403', function () {",
+              "    pm.response.to.have.status(403);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_ines}}"
+          }
+        ],
+        "url": "{{baseUrl}}/people/2",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Tom\",\n  \"last_name\": \"Lefèvre\",\n  \"email\": \"tom.lefevre@example.com\"\n}"
+        }
+      }
+    },
+    {
+      "name": "37 · Inès change son mot de passe → 200",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_ines}}"
+          }
+        ],
+        "url": "{{baseUrl}}/people/1",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Inès\",\n  \"last_name\": \"Haddad\",\n  \"email\": \"ines.haddad@example.com\",\n  \"phone\": \"06 12 34 56 78\",\n  \"password\": \"nouveau1234\"\n}"
+        }
+      }
+    },
+    {
+      "name": "37b · L'ancien mot de passe d'Inès ne marche plus → 401",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Code 401', function () {",
+              "    pm.response.to.have.status(401);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"ines.haddad@example.com\",\n  \"password\": \"ines1234\"\n}"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,480 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API Tremplin (Job Board)",
+    "version": "1.0.0",
+    "description": "Les 13 routes de l'API du Job Board. Pour tester une route : « Try it out », puis « Execute ».\n\nRoutes protégées (cadenas) : lancer d'abord POST /auth/login, copier le `token` de la réponse, cliquer sur « Authorize » et le coller.\n\nComptes de démonstration : admin@tremplin.example / admin1234 et ines.haddad@example.com / ines1234."
+  },
+  "tags": [
+    {"name": "Annonces", "description": "Routes publiques : annonces et candidatures"},
+    {"name": "Connexion", "description": "Création de compte et connexion"},
+    {"name": "Mon compte", "description": "Réservé à la personne connectée"},
+    {"name": "Administration", "description": "Réservé à l'admin"}
+  ],
+  "paths": {
+    "/ads": {
+      "get": {
+        "tags": ["Annonces"],
+        "summary": "Toutes les annonces (page des offres)",
+        "responses": {
+          "200": {
+            "description": "La liste des annonces, avec l'entreprise et la catégorie",
+            "content": {"application/json": {"schema": {"type": "array", "items": {"$ref": "#/components/schemas/AnnonceResume"}}}}
+          },
+          "500": {"$ref": "#/components/responses/Erreur500"}
+        }
+      },
+      "post": {
+        "tags": ["Administration"],
+        "summary": "Créer une annonce (route du bootstrap, réservée à l'admin)",
+        "security": [{"jeton": []}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AnnonceInput"}}}},
+        "responses": {
+          "201": {"description": "Annonce créée", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Annonce"}}}},
+          "400": {
+            "description": "Champ absent ou vide (0 compte comme vide), JSON mal écrit, ou company_id, category_id ou contact_id qui n'existe pas",
+            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Erreur"}, "example": {"error": "Entreprise, catégorie ou responsable introuvable"}}}
+          },
+          "401": {"$ref": "#/components/responses/Erreur401"},
+          "403": {"$ref": "#/components/responses/Erreur403"},
+          "500": {"$ref": "#/components/responses/Erreur500"}
+        }
+      }
+    },
+    "/ads/{id}": {
+      "get": {
+        "tags": ["Annonces"],
+        "summary": "Détail complet d'une annonce (appelé au clic sur « Learn more »)",
+        "parameters": [{"$ref": "#/components/parameters/id"}],
+        "responses": {
+          "200": {"description": "Le détail de l'annonce", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AnnonceDetail"}}}},
+          "400": {"$ref": "#/components/responses/Erreur400"},
+          "404": {"$ref": "#/components/responses/Erreur404"},
+          "500": {"$ref": "#/components/responses/Erreur500"}
+        }
+      }
+    },
+    "/ads/{id}/applications": {
+      "post": {
+        "tags": ["Annonces"],
+        "summary": "Postuler à une annonce",
+        "description": "Si l'email est inconnu, la personne est créée ; sinon, la personne existante est réutilisée, sans changer son nom ni son téléphone. La candidature est enregistrée dans la table applications.",
+        "parameters": [{"$ref": "#/components/parameters/id"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/CandidatureInput"}}}},
+        "responses": {
+          "201": {"description": "Candidature enregistrée", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Candidature"}}}},
+          "400": {"$ref": "#/components/responses/Erreur400"},
+          "404": {"$ref": "#/components/responses/Erreur404"},
+          "500": {"$ref": "#/components/responses/Erreur500"}
+        }
+      }
+    },
+    "/companies/{id}/ads": {
+      "get": {
+        "tags": ["Annonces"],
+        "summary": "Annonces d'une entreprise (route du bootstrap, le front ne l'utilise pas)",
+        "parameters": [{"$ref": "#/components/parameters/id"}],
+        "responses": {
+          "200": {
+            "description": "Les annonces de l'entreprise",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"type": "object", "properties": {"id": {"type": "integer"}, "title": {"type": "string"}, "short_description": {"type": "string"}}}
+                }
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/Erreur400"},
+          "404": {"$ref": "#/components/responses/Erreur404"},
+          "500": {"$ref": "#/components/responses/Erreur500"}
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": ["Connexion"],
+        "summary": "Créer un compte",
+        "description": "409 si l'email existe déjà dans people, y compris quand la personne a seulement postulé (elle existe alors sans mot de passe).",
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/InscriptionInput"}}}},
+        "responses": {
+          "201": {
+            "description": "Compte créé (le hash du mot de passe n'est jamais renvoyé)",
+            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Personne"}}}
+          },
+          "400": {"$ref": "#/components/responses/Erreur400"},
+          "409": {"$ref": "#/components/responses/Erreur409"},
+          "500": {"$ref": "#/components/responses/Erreur500"}
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Connexion"],
+        "summary": "Se connecter : renvoie un jeton valable 1 jour",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ConnexionInput"},
+              "examples": {
+                "admin": {"summary": "Compte admin", "value": {"email": "admin@tremplin.example", "password": "admin1234"}},
+                "ines": {"summary": "Compte utilisatrice", "value": {"email": "ines.haddad@example.com", "password": "ines1234"}}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Connexion réussie", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ConnexionReponse"}}}},
+          "400": {"$ref": "#/components/responses/Erreur400"},
+          "401": {
+            "description": "Email inconnu, compte sans mot de passe ou mot de passe faux (même message)",
+            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Erreur"}, "example": {"error": "Email ou mot de passe incorrect"}}}
+          },
+          "500": {"$ref": "#/components/responses/Erreur500"}
+        }
+      }
+    },
+    "/people/{id}": {
+      "put": {
+        "tags": ["Mon compte"],
+        "summary": "Modifier mon compte (seulement le sien)",
+        "description": "Sans `password`, le mot de passe ne change pas. 403 si l'id n'est pas celui de la personne connectée.",
+        "security": [{"jeton": []}],
+        "parameters": [{"$ref": "#/components/parameters/id"}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/CompteInput"}}}},
+        "responses": {
+          "200": {"description": "Compte modifié", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Compte"}}}},
+          "400": {"$ref": "#/components/responses/Erreur400"},
+          "401": {"$ref": "#/components/responses/Erreur401"},
+          "403": {
+            "description": "L'id n'est pas celui de la personne connectée (l'admin aussi est refusé)",
+            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Erreur"}, "example": {"error": "Vous ne pouvez modifier que votre propre compte"}}}
+          },
+          "404": {"$ref": "#/components/responses/Erreur404"},
+          "409": {"$ref": "#/components/responses/Erreur409"},
+          "500": {"$ref": "#/components/responses/Erreur500"}
+        }
+      }
+    },
+    "/admin/{table}": {
+      "get": {
+        "tags": ["Administration"],
+        "summary": "Une page d'une table",
+        "security": [{"jeton": []}],
+        "parameters": [
+          {"$ref": "#/components/parameters/table"},
+          {"name": "page", "in": "query", "schema": {"type": "integer", "default": 1, "minimum": 1}, "description": "1 si absent, 0, négatif ou non numérique"},
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Lignes par page : 7 si absent, 0 ou non numérique ; 1 au minimum et 100 au plus",
+            "schema": {"type": "integer", "default": 7, "minimum": 1, "maximum": 100}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Les lignes de la page et le nombre total de lignes",
+            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/PageAdmin"}}}
+          },
+          "400": {"$ref": "#/components/responses/Erreur400"},
+          "401": {"$ref": "#/components/responses/Erreur401"},
+          "403": {"$ref": "#/components/responses/Erreur403"},
+          "404": {"$ref": "#/components/responses/Erreur404"},
+          "500": {"$ref": "#/components/responses/Erreur500"}
+        }
+      },
+      "post": {
+        "tags": ["Administration"],
+        "summary": "Créer une ligne",
+        "description": "Champs obligatoires selon la table : ads → les 9 champs de l'annonce ; companies et categories → name ; people → first_name, last_name, email ; applications → ad_id, person_id, message. Les autres champs envoyés sont ignorés (une personne créée ici n'a ni téléphone ni mot de passe).",
+        "security": [{"jeton": []}],
+        "parameters": [{"$ref": "#/components/parameters/table"}],
+        "requestBody": {"$ref": "#/components/requestBodies/LigneAdmin"},
+        "responses": {
+          "201": {"description": "Ligne créée", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/LigneAdmin"}}}},
+          "400": {"$ref": "#/components/responses/Erreur400"},
+          "401": {"$ref": "#/components/responses/Erreur401"},
+          "403": {"$ref": "#/components/responses/Erreur403"},
+          "404": {"$ref": "#/components/responses/Erreur404"},
+          "409": {"$ref": "#/components/responses/Erreur409"},
+          "500": {"$ref": "#/components/responses/Erreur500"}
+        }
+      }
+    },
+    "/admin/{table}/{id}": {
+      "get": {
+        "tags": ["Administration"],
+        "summary": "Une ligne complète (sans le hash du mot de passe)",
+        "security": [{"jeton": []}],
+        "parameters": [{"$ref": "#/components/parameters/table"}, {"$ref": "#/components/parameters/id"}],
+        "responses": {
+          "200": {"description": "La ligne", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/LigneAdmin"}}}},
+          "400": {"$ref": "#/components/responses/Erreur400"},
+          "401": {"$ref": "#/components/responses/Erreur401"},
+          "403": {"$ref": "#/components/responses/Erreur403"},
+          "404": {"$ref": "#/components/responses/Erreur404"},
+          "500": {"$ref": "#/components/responses/Erreur500"}
+        }
+      },
+      "put": {
+        "tags": ["Administration"],
+        "summary": "Modifier une ligne",
+        "description": "Mêmes champs obligatoires que pour la création. Seules ces colonnes sont modifiées (people : ni phone, ni mot de passe, ni is_admin). Les exemples reprennent la ligne 1 sans la changer.",
+        "security": [{"jeton": []}],
+        "parameters": [{"$ref": "#/components/parameters/table"}, {"$ref": "#/components/parameters/id"}],
+        "requestBody": {"$ref": "#/components/requestBodies/LigneAdminModification"},
+        "responses": {
+          "200": {"description": "Ligne modifiée", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/LigneAdmin"}}}},
+          "400": {"$ref": "#/components/responses/Erreur400"},
+          "401": {"$ref": "#/components/responses/Erreur401"},
+          "403": {"$ref": "#/components/responses/Erreur403"},
+          "404": {"$ref": "#/components/responses/Erreur404"},
+          "409": {"$ref": "#/components/responses/Erreur409"},
+          "500": {"$ref": "#/components/responses/Erreur500"}
+        }
+      },
+      "delete": {
+        "tags": ["Administration"],
+        "summary": "Supprimer une ligne",
+        "description": "409 si la ligne est encore utilisée par une autre table (par exemple, une catégorie qui a des annonces).",
+        "security": [{"jeton": []}],
+        "parameters": [{"$ref": "#/components/parameters/table"}, {"$ref": "#/components/parameters/id"}],
+        "responses": {
+          "204": {"description": "Ligne supprimée (réponse vide)"},
+          "400": {"$ref": "#/components/responses/Erreur400"},
+          "401": {"$ref": "#/components/responses/Erreur401"},
+          "403": {"$ref": "#/components/responses/Erreur403"},
+          "404": {"$ref": "#/components/responses/Erreur404"},
+          "409": {"$ref": "#/components/responses/Erreur409"},
+          "500": {"$ref": "#/components/responses/Erreur500"}
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "jeton": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Le token renvoyé par POST /auth/login. Il est envoyé dans l'en-tête Authorization: Bearer <jeton>."
+      }
+    },
+    "parameters": {
+      "id": {"name": "id", "in": "path", "required": true, "schema": {"type": "integer", "example": 1}},
+      "table": {
+        "name": "table",
+        "in": "path",
+        "required": true,
+        "description": "Un autre nom de table donne 404",
+        "schema": {"type": "string", "enum": ["ads", "companies", "categories", "people", "applications"]}
+      }
+    },
+    "requestBodies": {
+      "LigneAdmin": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/LigneAdmin"},
+            "examples": {
+              "categories": {"summary": "categories ou companies", "value": {"name": "Design"}},
+              "people": {"summary": "people", "value": {"first_name": "Léa", "last_name": "Petit", "email": "lea.petit@example.com"}},
+              "applications": {"summary": "applications", "value": {"ad_id": 1, "person_id": 2, "message": "Bonjour, votre offre m'intéresse."}},
+              "ads": {
+                "summary": "ads",
+                "value": {
+                  "company_id": 2,
+                  "category_id": 2,
+                  "contact_id": 5,
+                  "title": "Data analyst",
+                  "short_description": "Créez nos tableaux de bord.",
+                  "description": "SQL et visualisation de données.",
+                  "location": "Paris",
+                  "working_time": "Temps plein",
+                  "salary": 42000
+                }
+              }
+            }
+          }
+        }
+      },
+      "LigneAdminModification": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/LigneAdmin"},
+            "examples": {
+              "categories": {"summary": "categories (ligne 1 inchangée)", "value": {"name": "Développement web"}},
+              "companies": {"summary": "companies (ligne 1 inchangée)", "value": {"name": "Nébula Studio"}},
+              "people": {"summary": "people (ligne 1 inchangée)", "value": {"first_name": "Inès", "last_name": "Haddad", "email": "ines.haddad@example.com"}},
+              "applications": {"summary": "applications (ligne 1 inchangée)", "value": {"ad_id": 1, "person_id": 1, "message": "Bonjour, votre offre correspond à mon profil."}},
+              "ads": {
+                "summary": "ads (ligne 1 inchangée)",
+                "value": {
+                  "company_id": 1,
+                  "category_id": 1,
+                  "contact_id": 4,
+                  "title": "Développeur full-stack JavaScript",
+                  "short_description": "Faites évoluer les outils internes de nos jeux.",
+                  "description": "Vous rejoignez l'équipe Outils : React, Node.js et PostgreSQL. 2 ans d'expérience souhaités.",
+                  "location": "Lyon",
+                  "working_time": "Temps plein",
+                  "salary": 45000
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "Erreur400": {
+        "description": "Requête refusée : « Champs obligatoires : … » (champ absent ou vide), « Donnée invalide » (JSON mal écrit, ou texte à la place d'un nombre) ou « Un champ numérique contient du texte » (routes /admin)",
+        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Erreur"}}}
+      },
+      "Erreur401": {
+        "description": "« Vous devez être connecté » : jeton absent, faux ou expiré",
+        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Erreur"}}}
+      },
+      "Erreur403": {
+        "description": "« Réservé aux administrateurs » : connecté, mais pas admin",
+        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Erreur"}}}
+      },
+      "Erreur404": {
+        "description": "Selon la route : « Annonce introuvable », « Entreprise introuvable », « Compte introuvable », « Table inconnue » ou « Ligne introuvable »",
+        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Erreur"}}}
+      },
+      "Erreur409": {
+        "description": "« Cet email est déjà utilisé » ; sur /admin : ligne liée à une autre table (id inexistant ou encore utilisé), ou valeur déjà prise (email)",
+        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Erreur"}}}
+      },
+      "Erreur500": {
+        "description": "Erreur imprévue (par exemple un id trop grand pour PostgreSQL)",
+        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Erreur"}, "example": {"error": "Erreur du serveur"}}}
+      }
+    },
+    "schemas": {
+      "Erreur": {"type": "object", "properties": {"error": {"type": "string"}}},
+      "AnnonceResume": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "example": 1},
+          "title": {"type": "string", "example": "Développeur full-stack JavaScript"},
+          "short_description": {"type": "string", "example": "Faites évoluer les outils internes de nos jeux."},
+          "company_name": {"type": "string", "example": "Nébula Studio"},
+          "category_name": {"type": "string", "example": "Développement web"}
+        }
+      },
+      "AnnonceInput": {
+        "type": "object",
+        "required": ["company_id", "category_id", "contact_id", "title", "short_description", "description", "location", "working_time", "salary"],
+        "properties": {
+          "company_id": {"type": "integer", "example": 2},
+          "category_id": {"type": "integer", "example": 2},
+          "contact_id": {"type": "integer", "description": "La personne responsable de l'annonce", "example": 5},
+          "title": {"type": "string", "example": "Data analyst"},
+          "short_description": {"type": "string", "example": "Créez nos tableaux de bord."},
+          "description": {"type": "string", "example": "SQL et visualisation de données."},
+          "location": {"type": "string", "example": "Paris"},
+          "working_time": {"type": "string", "example": "Temps plein"},
+          "salary": {"type": "integer", "description": "Salaire brut annuel en euros", "example": 42000}
+        }
+      },
+      "Annonce": {"allOf": [{"type": "object", "properties": {"id": {"type": "integer", "example": 4}}}, {"$ref": "#/components/schemas/AnnonceInput"}]},
+      "AnnonceDetail": {
+        "allOf": [
+          {"$ref": "#/components/schemas/Annonce"},
+          {
+            "type": "object",
+            "properties": {
+              "company_name": {"type": "string", "example": "Vertigo Data"},
+              "category_name": {"type": "string", "example": "Data"},
+              "contact_name": {"type": "string", "example": "Hugo Bernard"},
+              "contact_email": {"type": "string", "example": "hugo.bernard@vertigo.example"}
+            }
+          }
+        ]
+      },
+      "CandidatureInput": {
+        "type": "object",
+        "required": ["first_name", "last_name", "email", "message"],
+        "properties": {
+          "first_name": {"type": "string", "example": "Sam"},
+          "last_name": {"type": "string", "example": "Durand"},
+          "email": {"type": "string", "example": "sam.durand@example.com"},
+          "phone": {"type": "string", "description": "Facultatif", "example": "06 11 22 33 44"},
+          "message": {"type": "string", "example": "Bonjour, votre offre m'intéresse."}
+        }
+      },
+      "Candidature": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "example": 6},
+          "ad_id": {"type": "integer", "example": 1},
+          "person_id": {"type": "integer", "example": 7},
+          "message": {"type": "string", "example": "Bonjour, votre offre m'intéresse."},
+          "created_at": {"type": "string", "format": "date-time"}
+        }
+      },
+      "InscriptionInput": {
+        "type": "object",
+        "required": ["first_name", "last_name", "email", "password"],
+        "properties": {
+          "first_name": {"type": "string", "example": "Nora"},
+          "last_name": {"type": "string", "example": "Petit"},
+          "email": {"type": "string", "example": "nora.petit@example.com"},
+          "phone": {"type": "string", "description": "Facultatif", "example": "06 11 22 33 44"},
+          "password": {"type": "string", "example": "nora1234"}
+        }
+      },
+      "Personne": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "example": 7},
+          "first_name": {"type": "string", "example": "Nora"},
+          "last_name": {"type": "string", "example": "Petit"},
+          "email": {"type": "string", "example": "nora.petit@example.com"},
+          "phone": {"type": "string", "nullable": true, "example": "06 11 22 33 44"}
+        }
+      },
+      "ConnexionInput": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {"email": {"type": "string", "example": "admin@tremplin.example"}, "password": {"type": "string", "example": "admin1234"}}
+      },
+      "Compte": {"allOf": [{"$ref": "#/components/schemas/Personne"}, {"type": "object", "properties": {"is_admin": {"type": "boolean", "example": false}}}]},
+      "ConnexionReponse": {
+        "type": "object",
+        "properties": {"token": {"type": "string", "description": "Jeton JWT à coller dans « Authorize »"}, "user": {"$ref": "#/components/schemas/Compte"}}
+      },
+      "CompteInput": {
+        "type": "object",
+        "required": ["first_name", "last_name", "email"],
+        "example": {"first_name": "Inès", "last_name": "Haddad", "email": "ines.haddad@example.com", "phone": "06 12 34 56 78"},
+        "properties": {
+          "first_name": {"type": "string", "example": "Inès"},
+          "last_name": {"type": "string", "example": "Haddad"},
+          "email": {"type": "string", "example": "ines.haddad@example.com"},
+          "phone": {"type": "string", "description": "Facultatif : absent ou vide, le téléphone est effacé", "example": "06 12 34 56 78"},
+          "password": {"type": "string", "description": "Facultatif : nouveau mot de passe"}
+        }
+      },
+      "PageAdmin": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "type": "array",
+            "description": "Colonnes selon la table : ads → id, title, company_name, category_name ; companies et categories → id, name ; people → id, first_name, last_name, email, phone ; applications → id, ad_title, person_name, message, created_at",
+            "items": {"type": "object", "additionalProperties": true}
+          },
+          "total": {"type": "integer", "example": 3},
+          "page": {"type": "integer", "example": 1},
+          "limit": {"type": "integer", "example": 7}
+        }
+      },
+      "LigneAdmin": {"type": "object", "description": "Une ligne de la table choisie : ses colonnes dépendent de la table", "additionalProperties": true}
+    }
+  }
+}
