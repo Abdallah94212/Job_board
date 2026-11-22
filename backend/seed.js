@@ -1,6 +1,5 @@
 // Remplit la base avec les données de démonstration, depuis le backend : npm run seed
-// À lancer juste après database/schema.sql : les tables sont vides, donc les id commencent à 1.
-const bcrypt = require('bcryptjs');
+// il cree les comptes admin et utilisatuer et hach leur mdp jtw pour admin
 const db = require('./db');
 
 async function seed() {
